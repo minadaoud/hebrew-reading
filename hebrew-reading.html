@@ -155,6 +155,22 @@ body{
 .word-popup.visible{display:block;animation:popIn .15s ease-out}
 .word-popup .translit{font-size:16px;font-weight:700;color:#ffd54f;margin-bottom:2px}
 .word-popup .meaning{font-size:13px;line-height:1.3}
+.word-popup .speak-btn{
+  display:inline-block;margin-top:6px;padding:4px 12px;
+  border:1px solid rgba(255,255,255,0.3);border-radius:14px;
+  background:rgba(255,255,255,0.1);color:#fff;cursor:pointer;
+  font-size:13px;pointer-events:auto;transition:background .2s;
+}
+.word-popup .speak-btn:active{background:rgba(255,255,255,0.25)}
+.sent-speak{
+  display:inline-block;width:22px;height:22px;text-align:center;
+  line-height:22px;border-radius:50%;background:var(--accent-light);
+  color:var(--accent);cursor:pointer;font-size:12px;
+  margin-right:4px;vertical-align:middle;transition:all .2s;
+  -webkit-user-select:none;user-select:none;
+}
+.sent-speak:active{transform:scale(.9)}
+.reading-mode .sent-speak{display:none}
 .word-popup::after{
   content:'';position:absolute;bottom:-7px;left:50%;
   transform:translateX(-50%);
@@ -210,6 +226,7 @@ body{
 <div class="word-popup" id="wordPopup">
   <div class="translit" id="popupTranslit"></div>
   <div class="meaning" id="popupMeaning"></div>
+  <div class="speak-btn" id="popupSpeak" onclick="speakPopupWord()">&#9654; Listen</div>
 </div>
 
 <script>
@@ -2523,6 +2540,7 @@ function openStory(index) {
     }
     html += '<div class="sentence-block' + pClass + '">' +
       '<div class="sentence-text">' + wordsHtml +
+        '<span class="sent-speak" data-si="' + si + '">&#9654;</span>' +
         '<span class="sentence-toggle" data-si="' + si + '">EN</span>' +
       '</div>' +
       '<div class="sentence-translation" id="trans-' + si + '">' + esc(sent.tr) + '</div></div>';
@@ -2551,6 +2569,7 @@ function showStoryList() {
 function showPopup(wordEl) {
   if (readingMode) return;
   var popup = document.getElementById('wordPopup');
+  currentPopupHebrew = wordEl.textContent.replace(/[.,;:!?"\"]/g, '').trim();
   document.getElementById('popupTranslit').textContent = wordEl.dataset.t;
   document.getElementById('popupMeaning').textContent = wordEl.dataset.e;
   popup.classList.remove('below');
@@ -2575,12 +2594,38 @@ function hidePopup() {
   document.getElementById('wordPopup').classList.remove('visible');
 }
 
+var currentPopupHebrew = '';
+
+function speakHebrew(text) {
+  if (!window.speechSynthesis) return;
+  window.speechSynthesis.cancel();
+  var clean = text.replace(/[\u0591-\u05C7]/g, '');
+  var utter = new SpeechSynthesisUtterance(clean);
+  utter.lang = 'he-IL';
+  utter.rate = 0.85;
+  window.speechSynthesis.speak(utter);
+}
+
+function speakPopupWord() {
+  if (currentPopupHebrew) speakHebrew(currentPopupHebrew);
+}
+
+function speakSentence(si) {
+  if (currentStory < 0) return;
+  var sent = STORIES[currentStory].sentences[si];
+  var text = sent.w.map(function(w){ return w.h; }).join(' ');
+  speakHebrew(text);
+}
+
 // ============================================================
 // EVENT DELEGATION
 // ============================================================
 document.addEventListener('click', function(e) {
   var word = e.target.closest('.word');
   if (word) { e.stopPropagation(); showPopup(word); return; }
+
+  var spk = e.target.closest('.sent-speak');
+  if (spk) { speakSentence(parseInt(spk.dataset.si)); return; }
 
   var tog = e.target.closest('.sentence-toggle');
   if (tog) {
