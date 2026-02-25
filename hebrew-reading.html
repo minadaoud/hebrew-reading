@@ -1,0 +1,2651 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>קריאה בעברית — Hebrew Reading Practice</title>
+<style>
+:root {
+  --bg: #faf8f5;
+  --text: #1a1a1a;
+  --card-bg: #ffffff;
+  --border: #e0ddd8;
+  --accent: #2c5f8a;
+  --accent-light: #e8f0f7;
+  --hebrew-size: 28px;
+  --line-height: 2.2;
+  --popup-bg: #2a2a2a;
+  --popup-text: #fff;
+  --trans-color: #777;
+  --shadow: 0 2px 12px rgba(0,0,0,0.08);
+}
+[data-theme="dark"] {
+  --bg: #1a1a2e;
+  --text: #e0e0e0;
+  --card-bg: #16213e;
+  --border: #2a2a4a;
+  --accent: #4da6ff;
+  --accent-light: #1a2a4a;
+  --popup-bg: #444;
+  --trans-color: #999;
+  --shadow: 0 2px 12px rgba(0,0,0,0.3);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  background:var(--bg);color:var(--text);
+  min-height:100vh;transition:background .3s,color .3s;
+  -webkit-tap-highlight-color:transparent;
+}
+.header{
+  position:sticky;top:0;z-index:100;
+  background:var(--card-bg);border-bottom:1px solid var(--border);
+  padding:10px 16px;display:flex;align-items:center;
+  justify-content:space-between;flex-wrap:wrap;gap:8px;
+}
+.header-title{font-size:17px;font-weight:700;white-space:nowrap}
+.header-controls{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.btn{
+  padding:5px 12px;border:1px solid var(--border);border-radius:20px;
+  background:var(--card-bg);color:var(--text);cursor:pointer;
+  font-size:13px;transition:all .2s;white-space:nowrap;
+  -webkit-user-select:none;user-select:none;
+}
+.btn:active{transform:scale(.96)}
+.btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.font-controls{display:flex;gap:4px;align-items:center}
+.font-btn{
+  width:30px;height:30px;border-radius:50%;border:1px solid var(--border);
+  background:var(--card-bg);color:var(--text);cursor:pointer;
+  font-size:15px;display:flex;align-items:center;justify-content:center;
+}
+.font-btn:active{transform:scale(.92)}
+
+/* Progress bar */
+.progress-bar{height:3px;background:var(--border);position:sticky;top:52px;z-index:99;display:none}
+.progress-fill{height:100%;background:var(--accent);transition:width .3s;width:0%}
+
+/* Story list */
+.story-list{padding:20px;max-width:780px;margin:0 auto}
+.story-list h2{text-align:center;margin-bottom:20px;font-size:22px;direction:ltr}
+.story-card{
+  background:var(--card-bg);border:1px solid var(--border);border-radius:14px;
+  padding:18px 20px;margin-bottom:14px;cursor:pointer;
+  transition:all .2s;box-shadow:var(--shadow);
+}
+.story-card:active{transform:scale(.98)}
+.story-card .genre{
+  font-size:11px;text-transform:uppercase;color:var(--accent);
+  letter-spacing:1.5px;margin-bottom:6px;direction:ltr;
+}
+.story-card .title-he{
+  font-family:"Arial Hebrew","Noto Sans Hebrew",serif;
+  font-size:24px;margin-bottom:4px;line-height:1.6;
+}
+.story-card .title-en{font-size:15px;color:var(--trans-color);direction:ltr}
+.story-card .meta{font-size:12px;color:var(--trans-color);margin-top:8px;direction:ltr}
+
+/* Story view */
+.story-view{display:none;max-width:780px;margin:0 auto;padding:16px 20px 60px}
+.story-view.active{display:block}
+.back-btn{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:8px 14px;margin-bottom:16px;
+  border:1px solid var(--border);border-radius:8px;
+  background:var(--card-bg);color:var(--text);cursor:pointer;font-size:14px;
+  direction:ltr;
+}
+.story-header-section{
+  text-align:center;margin-bottom:28px;padding-bottom:18px;
+  border-bottom:2px solid var(--border);
+}
+.story-header-section .genre{
+  font-size:12px;text-transform:uppercase;color:var(--accent);
+  letter-spacing:1.5px;margin-bottom:6px;direction:ltr;
+}
+.story-header-section .title-he{
+  font-family:"Arial Hebrew","Noto Sans Hebrew",serif;
+  font-size:30px;line-height:1.6;margin-bottom:4px;
+}
+.story-header-section .title-en{font-size:17px;color:var(--trans-color);direction:ltr}
+
+/* Sentence blocks */
+.sentence-block{
+  margin-bottom:4px;padding:6px 10px;border-radius:8px;transition:background .2s;
+}
+.sentence-block.p-start{margin-top:22px}
+.sentence-text{direction:rtl;text-align:right;position:relative}
+.word{
+  font-family:"Arial Hebrew","Noto Sans Hebrew",serif;
+  font-size:var(--hebrew-size);line-height:var(--line-height);
+  cursor:pointer;padding:1px 3px;border-radius:4px;
+  transition:background .15s;display:inline;
+}
+.word:hover{background:var(--accent-light)}
+.reading-mode .word{cursor:default}
+.reading-mode .word:hover{background:transparent}
+
+.sentence-toggle{
+  display:inline-block;width:22px;height:22px;text-align:center;
+  line-height:22px;border-radius:50%;background:var(--accent-light);
+  color:var(--accent);cursor:pointer;font-size:10px;font-weight:700;
+  margin-right:6px;vertical-align:middle;transition:all .2s;
+  -webkit-user-select:none;user-select:none;
+}
+.sentence-toggle:hover{background:var(--accent);color:#fff}
+.sentence-toggle.open{background:var(--accent);color:#fff}
+.reading-mode .sentence-toggle{display:none}
+
+.sentence-translation{
+  display:none;padding:6px 0 2px;font-size:14px;color:var(--trans-color);
+  font-style:italic;border-top:1px dashed var(--border);margin-top:6px;
+  direction:ltr;text-align:left;line-height:1.5;
+}
+.sentence-translation.visible{display:block}
+
+/* Word popup */
+.word-popup{
+  display:none;position:fixed;z-index:200;
+  background:var(--popup-bg);color:var(--popup-text);
+  padding:10px 16px;border-radius:10px;
+  box-shadow:0 4px 24px rgba(0,0,0,0.35);
+  text-align:center;max-width:240px;min-width:80px;
+  pointer-events:none;direction:ltr;
+}
+.word-popup.visible{display:block;animation:popIn .15s ease-out}
+.word-popup .translit{font-size:16px;font-weight:700;color:#ffd54f;margin-bottom:2px}
+.word-popup .meaning{font-size:13px;line-height:1.3}
+.word-popup::after{
+  content:'';position:absolute;bottom:-7px;left:50%;
+  transform:translateX(-50%);
+  border-left:7px solid transparent;border-right:7px solid transparent;
+  border-top:7px solid var(--popup-bg);
+}
+.word-popup.below::after{
+  bottom:auto;top:-7px;
+  border-top:none;border-bottom:7px solid var(--popup-bg);
+}
+@keyframes popIn{
+  from{opacity:0;transform:translateY(4px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+/* Show-all translations button */
+.show-all-bar{
+  text-align:center;margin:10px 0 20px;
+}
+
+@media(max-width:600px){
+  .header{padding:8px 10px}
+  .story-list,.story-view{padding:10px 12px 60px}
+  :root{--hebrew-size:24px}
+  .story-header-section .title-he{font-size:26px}
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-title">קריאה בעברית</div>
+  <div class="header-controls">
+    <div class="font-controls">
+      <button class="font-btn" onclick="adjustFont(-2)" aria-label="Decrease font">A−</button>
+      <button class="font-btn" onclick="adjustFont(2)" aria-label="Increase font">A+</button>
+    </div>
+    <button class="btn" id="readingModeBtn" onclick="toggleReadingMode()">Focus</button>
+    <button class="btn" id="showAllBtn" onclick="toggleAllTranslations()" style="display:none">Show All EN</button>
+    <button class="btn" id="darkModeBtn" onclick="toggleDarkMode()">Dark</button>
+  </div>
+</div>
+
+<div class="progress-bar" id="progressBar"><div class="progress-fill" id="progressFill"></div></div>
+
+<div class="story-list" id="storyList"></div>
+
+<div class="story-view" id="storyView">
+  <button class="back-btn" onclick="showStoryList()">&#8592; Back to Stories</button>
+  <div id="storyContent"></div>
+</div>
+
+<div class="word-popup" id="wordPopup">
+  <div class="translit" id="popupTranslit"></div>
+  <div class="meaning" id="popupMeaning"></div>
+</div>
+
+<script>
+// ============================================================
+// STORIES DATA — each story has sentences with word-by-word data
+// h = Hebrew with nikkud, t = transliteration, e = English
+// p = true marks a new paragraph
+// ============================================================
+const STORIES = [
+// ──────────────────────────────────────────────
+// STORY 1 — Crime / Mystery
+// ──────────────────────────────────────────────
+{
+  title:"הַצֵּל שֶׁל הַשּׁוּק",
+  titleTranslit:"HaTsel Shel HaShuk",
+  titleEnglish:"The Shadow of the Market",
+  genre:"Crime / Mystery",
+  icon:"🔍",
+  sentences:[
+{p:true,w:[
+{h:"בְּלַיְלָה",t:"belayla",e:"on a night"},
+{h:"קַר",t:"kar",e:"cold"},
+{h:"שֶׁל",t:"shel",e:"of"},
+{h:"חֹדֶשׁ",t:"khodesh",e:"the month of"},
+{h:"יָנוּאָר,",t:"yanuar",e:"January"},
+{h:"מָצְאוּ",t:"mats'u",e:"they found"},
+{h:"גּוּפָה",t:"gufa",e:"a body"},
+{h:"בַּשּׁוּק",t:"bashuk",e:"in the market"},
+{h:"מַחֲנֵה",t:"makhane",e:"camp of"},
+{h:"יְהוּדָה",t:"yehuda",e:"Yehuda"},
+{h:"בִּירוּשָׁלַיִם.",t:"birushalayim",e:"in Jerusalem"}
+],tr:"On a cold January night, a body was found in the Machane Yehuda market in Jerusalem."},
+
+{w:[
+{h:"הַבַּלָּשִׁית",t:"habalashit",e:"the detective (f)"},
+{h:"רוּת",t:"Rut",e:"Rut (name)"},
+{h:"מִזְרָחִי",t:"Mizrakhi",e:"Mizrachi (name)"},
+{h:"הִגִּיעָה",t:"higi'a",e:"arrived"},
+{h:"לַמָּקוֹם",t:"lamakom",e:"to the place"},
+{h:"בִּשְׁעָה",t:"bish'a",e:"at the hour of"},
+{h:"שְׁתַּיִם",t:"shtayim",e:"two"},
+{h:"בַּלַּיְלָה.",t:"balayla",e:"in the night"}
+],tr:"Detective Rut Mizrachi arrived at the scene at two in the morning."},
+
+{w:[
+{h:"הַשּׁוּק",t:"hashuk",e:"the market"},
+{h:"הָיָה",t:"haya",e:"was"},
+{h:"חָשׁוּךְ",t:"khashukh",e:"dark"},
+{h:"וְשָׁקֵט,",t:"veshakет",e:"and quiet"},
+{h:"שׁוֹנֶה",t:"shone",e:"different"},
+{h:"מְאוֹד",t:"me'od",e:"very"},
+{h:"מֵהָהֲמוֹן",t:"mehahamon",e:"from the crowd"},
+{h:"שֶׁל",t:"shel",e:"of"},
+{h:"יוֹם",t:"yom",e:"day"},
+{h:"שִׁשִּׁי.",t:"shishi",e:"Friday"}
+],tr:"The market was dark and quiet, very different from the Friday crowd."},
+
+{w:[
+{h:"רוּת",t:"Rut",e:"Rut"},
+{h:"הִסְתַּכְּלָה",t:"histakla",e:"looked"},
+{h:"עַל",t:"al",e:"at"},
+{h:"הַגּוּפָה.",t:"hagufa",e:"the body"},
+{h:"הִיא",t:"hi",e:"she"},
+{h:"הִכִּירָה",t:"hikira",e:"recognized"},
+{h:"אֶת",t:"et",e:"(object marker)"},
+{h:"הָאִישׁ.",t:"ha'ish",e:"the man"}
+],tr:"Rut looked at the body. She recognized the man."},
+
+{w:[
+{h:"שְׁמוֹ",t:"shmo",e:"his name"},
+{h:"הָיָה",t:"haya",e:"was"},
+{h:"יוֹסֵף",t:"Yosef",e:"Yosef (name)"},
+{h:"אַבּוּטְבּוּל,",t:"Abutbul",e:"Abutbul (name)"},
+{h:"מוֹכֵר",t:"mokher",e:"seller of"},
+{h:"תַּבְלִינִים",t:"tavlinim",e:"spices"},
+{h:"וָתִיק",t:"vatik",e:"veteran"},
+{h:"בַּשּׁוּק.",t:"bashuk",e:"in the market"}
+],tr:"His name was Yosef Abutbul, a veteran spice seller in the market."},
+
+{p:true,w:[
+{h:"כָּל",t:"kol",e:"every"},
+{h:"שַׁבָּת,",t:"Shabat",e:"Shabbat"},
+{h:"רוּת",t:"Rut",e:"Rut"},
+{h:"קָנְתָה",t:"kanta",e:"bought"},
+{h:"מִמֶּנּוּ",t:"mimenu",e:"from him"},
+{h:"כַּמּוֹן,",t:"kamon",e:"cumin"},
+{h:"כֻּרְכּוֹם",t:"kurkum",e:"turmeric"},
+{h:"וּפִלְפֵּל.",t:"ufilpel",e:"and pepper"}
+],tr:"Every Shabbat, Rut bought cumin, turmeric and pepper from him."},
+
+{w:[
+{h:"הוּא",t:"hu",e:"he"},
+{h:"תָּמִיד",t:"tamid",e:"always"},
+{h:"חִיֵּךְ",t:"khiyekh",e:"smiled"},
+{h:"וְנָתַן",t:"venatan",e:"and gave"},
+{h:"לָהּ",t:"la",e:"to her"},
+{h:"קְצָת",t:"ktsat",e:"a little"},
+{h:"יוֹתֵר",t:"yoter",e:"more"},
+{h:"מִמַּה",t:"mima",e:"than what"},
+{h:"שֶׁבִּקְּשָׁה.",t:"shebiksha",e:"she asked for"}
+],tr:"He always smiled and gave her a little more than she asked for."},
+
+{w:[
+{h:"עַכְשָׁו",t:"akhshav",e:"now"},
+{h:"הוּא",t:"hu",e:"he"},
+{h:"שָׁכַב",t:"shakhav",e:"lay"},
+{h:"עַל",t:"al",e:"on"},
+{h:"הָרִצְפָּה",t:"haritspa",e:"the floor"},
+{h:"הַקָּרָה,",t:"hakara",e:"the cold"},
+{h:"לְיַד",t:"leyad",e:"next to"},
+{h:"דּוּכָן",t:"dukhan",e:"stall of"},
+{h:"הַתַּבְלִינִים",t:"hatavlinim",e:"the spices"},
+{h:"שֶׁלּוֹ.",t:"shelo",e:"his"}
+],tr:"Now he lay on the cold floor, next to his spice stall."},
+
+{p:true,w:[
+{h:"רוּת",t:"Rut",e:"Rut"},
+{h:"שָׁאֲלָה",t:"sha'ala",e:"asked"},
+{h:"אֶת",t:"et",e:"(object marker)"},
+{h:"הַשּׁוֹטְרִים",t:"hashotrim",e:"the officers"},
+{h:"אִם",t:"im",e:"if"},
+{h:"מִישֶׁהוּ",t:"mishehu",e:"someone"},
+{h:"רָאָה",t:"ra'a",e:"saw"},
+{h:"מַשֶּׁהוּ.",t:"mashehu",e:"something"}
+],tr:"Rut asked the officers if anyone saw anything."},
+
+{w:[
+{h:"אַף",t:"af",e:"no"},
+{h:"אֶחָד",t:"ekhad",e:"one"},
+{h:"לֹא",t:"lo",e:"not"},
+{h:"עָנָה.",t:"ana",e:"answered"},
+{h:"בַּשּׁוּק",t:"bashuk",e:"in the market"},
+{h:"הַזֶּה,",t:"haze",e:"this"},
+{h:"כֻּלָּם",t:"kulam",e:"everyone"},
+{h:"יוֹדְעִים",t:"yod'im",e:"knows"},
+{h:"הַכֹּל,",t:"hakol",e:"everything"},
+{h:"אֲבָל",t:"aval",e:"but"},
+{h:"אַף",t:"af",e:"no"},
+{h:"אֶחָד",t:"ekhad",e:"one"},
+{h:"לֹא",t:"lo",e:"not"},
+{h:"מְדַבֵּר.",t:"medaber",e:"talks"}
+],tr:"No one answered. In this market, everyone knows everything, but no one talks."},
+
+{p:true,w:[
+{h:"בַּבֹּקֶר,",t:"baboker",e:"in the morning"},
+{h:"רוּת",t:"Rut",e:"Rut"},
+{h:"חָזְרָה",t:"khazra",e:"returned"},
+{h:"לַשּׁוּק.",t:"lashuk",e:"to the market"},
+{h:"הַדּוּכָנִים",t:"hadukhanim",e:"the stalls"},
+{h:"נִפְתְּחוּ",t:"niftkhu",e:"opened"},
+{h:"כְּרָגִיל.",t:"keragil",e:"as usual"}
+],tr:"In the morning, Rut returned to the market. The stalls opened as usual."},
+
+{w:[
+{h:"הָרֵיחוֹת",t:"harekhot",e:"the smells"},
+{h:"שֶׁל",t:"shel",e:"of"},
+{h:"קָפֶה",t:"kafe",e:"coffee"},
+{h:"טוּרְקִי",t:"turki",e:"Turkish"},
+{h:"וּבֵיגָלֶה",t:"uveigale",e:"and bagels"},
+{h:"מָלְאוּ",t:"mal'u",e:"filled"},
+{h:"אֶת",t:"et",e:"(object marker)"},
+{h:"הָאֲוִיר.",t:"ha'avir",e:"the air"}
+],tr:"The smells of Turkish coffee and bagels filled the air."},
+
+{w:[
+{h:"רוּת",t:"Rut",e:"Rut"},
+{h:"דִּבְּרָה",t:"dibra",e:"spoke"},
+{h:"עִם",t:"im",e:"with"},
+{h:"אֵיתָן,",t:"Eitan",e:"Eitan (name)"},
+{h:"מוֹכֵר",t:"mokher",e:"seller of"},
+{h:"הָעוּגוֹת,",t:"ha'ugot",e:"the cakes"},
+{h:"שֶׁהַדּוּכָן",t:"shehadukhan",e:"whose stall"},
+{h:"שֶׁלּוֹ",t:"shelo",e:"his"},
+{h:"הָיָה",t:"haya",e:"was"},
+{h:"לְיַד",t:"leyad",e:"next to"},
+{h:"הַדּוּכָן",t:"hadukhan",e:"the stall"},
+{h:"שֶׁל",t:"shel",e:"of"},
+{h:"יוֹסֵף.",t:"Yosef",e:"Yosef"}
+],tr:"Rut spoke with Eitan, the pastry seller, whose stall was next to Yosef's."},
+
+{p:true,w:[
+{h:"\"יוֹסֵף",t:"Yosef",e:"Yosef"},
+{h:"הָיָה",t:"haya",e:"was"},
+{h:"אִישׁ",t:"ish",e:"man"},
+{h:"טוֹב,\"",t:"tov",e:"good"},
+{h:"אָמַר",t:"amar",e:"said"},
+{h:"אֵיתָן,",t:"Eitan",e:"Eitan"},
+{h:"\"אֲבָל",t:"aval",e:"but"},
+{h:"בַּזְּמַן",t:"bazman",e:"in the time"},
+{h:"הָאַחֲרוֹן",t:"ha'akharon",e:"the last"},
+{h:"הוּא",t:"hu",e:"he"},
+{h:"הָיָה",t:"haya",e:"was"},
+{h:"מְאוֹד",t:"me'od",e:"very"},
+{h:"מוּדְאָג.\"",t:"mud'ag",e:"worried"}
+],tr:"\"Yosef was a good man,\" said Eitan, \"but lately he was very worried.\""},
+
+{w:[
+{h:"\"מוּדְאָג",t:"mud'ag",e:"worried"},
+{h:"מִמָּה?\"",t:"mima",e:"about what"},
+{h:"שָׁאֲלָה",t:"sha'ala",e:"asked"},
+{h:"רוּת.",t:"Rut",e:"Rut"}
+],tr:"\"Worried about what?\" asked Rut."},
+
+{w:[
+{h:"\"מִישֶׁהוּ",t:"mishehu",e:"someone"},
+{h:"רָצָה",t:"ratsa",e:"wanted"},
+{h:"לִקְנוֹת",t:"liknot",e:"to buy"},
+{h:"אֶת",t:"et",e:"(object marker)"},
+{h:"הַדּוּכָן",t:"hadukhan",e:"the stall"},
+{h:"שֶׁלּוֹ.",t:"shelo",e:"his"},
+{h:"הוּא",t:"hu",e:"he"},
+{h:"סֵרֵב,",t:"serev",e:"refused"},
+{h:"וְאָז",t:"ve'az",e:"and then"},
+{h:"הִתְחִילוּ",t:"hitkhilu",e:"began"},
+{h:"הָאִיּוּמִים.\"",t:"ha'iyumim",e:"the threats"}
+],tr:"\"Someone wanted to buy his stall. He refused, and then the threats began.\""},
+
+{p:true,w:[
+{h:"רוּת",t:"Rut",e:"Rut"},
+{h:"הָלְכָה",t:"halkha",e:"walked"},
+{h:"לְבֵית",t:"leveit",e:"to the house of"},
+{h:"הַקָּפֶה",t:"hakafe",e:"the coffee"},
+{h:"בַּקָּצֶה",t:"bakatse",e:"at the end"},
+{h:"שֶׁל",t:"shel",e:"of"},
+{h:"הַשּׁוּק",t:"hashuk",e:"the market"},
+{h:"וְהִזְמִינָה",t:"vehizmina",e:"and ordered"},
+{h:"קָפֶה",t:"kafe",e:"coffee"},
+{h:"הָפוּךְ.",t:"hafukh",e:"upside-down (cappuccino)"}
+],tr:"Rut walked to the café at the end of the market and ordered a cappuccino."},
+
+{w:[
+{h:"הִיא",t:"hi",e:"she"},
+{h:"חָשְׁבָה",t:"khashva",e:"thought"},
+{h:"עַל",t:"al",e:"about"},
+{h:"מָה",t:"ma",e:"what"},
+{h:"שֶׁאֵיתָן",t:"she'Eitan",e:"that Eitan"},
+{h:"אָמַר.",t:"amar",e:"said"},
+{h:"מִי",t:"mi",e:"who"},
+{h:"רוֹצֶה",t:"rotse",e:"wants"},
+{h:"לִקְנוֹת",t:"liknot",e:"to buy"},
+{h:"דּוּכָן",t:"dukhan",e:"a stall"},
+{h:"בַּשּׁוּק",t:"bashuk",e:"in the market"},
+{h:"בְּכֹחַ?",t:"bekhoakh",e:"by force"}
+],tr:"She thought about what Eitan said. Who wants to buy a market stall by force?"},
+
+{w:[
+{h:"הַטֶּלֶפוֹן",t:"hatelefon",e:"the phone"},
+{h:"שֶׁלָּהּ",t:"shela",e:"her"},
+{h:"צִלְצֵל.",t:"tsiltsel",e:"rang"},
+{h:"הָיְתָה",t:"hayta",e:"it was"},
+{h:"זֹאת",t:"zot",e:"this"},
+{h:"חִילָה,",t:"Khila",e:"Hila (name)"},
+{h:"עִתּוֹנָאִית",t:"itonait",e:"journalist (f)"},
+{h:"מֵעִתּוֹן",t:"me'iton",e:"from a newspaper"},
+{h:"מְקוֹמִי.",t:"mekomi",e:"local"}
+],tr:"Her phone rang. It was Hila, a journalist from a local newspaper."},
+
+{w:[
+{h:"\"רוּת,",t:"Rut",e:"Rut"},
+{h:"אֲנִי",t:"ani",e:"I"},
+{h:"יוֹדַעַת",t:"yoda'at",e:"know (f)"},
+{h:"מַשֶּׁהוּ",t:"mashehu",e:"something"},
+{h:"עַל",t:"al",e:"about"},
+{h:"יוֹסֵף,\"",t:"Yosef",e:"Yosef"},
+{h:"אָמְרָה",t:"amra",e:"said (f)"},
+{h:"חִילָה.",t:"Khila",e:"Hila"},
+{h:"\"אֲנַחְנוּ",t:"anakhnu",e:"we"},
+{h:"צְרִיכוֹת",t:"tsrikhot",e:"need (f.pl)"},
+{h:"לְדַבֵּר.\"",t:"ledaber",e:"to talk"}
+],tr:"\"Rut, I know something about Yosef,\" said Hila. \"We need to talk.\""},
+
+{p:true,w:[
+{h:"הֵן",t:"hen",e:"they (f)"},
+{h:"נִפְגְּשׁוּ",t:"nifgeshu",e:"met"},
+{h:"בְּגַן",t:"began",e:"in the garden of"},
+{h:"הָעַצְמָאוּת,",t:"ha'atsma'ut",e:"independence"},
+{h:"רָחוֹק",t:"rakhok",e:"far"},
+{h:"מֵהָאוֹזְנַיִם",t:"meha'oznayim",e:"from the ears"},
+{h:"שֶׁל",t:"shel",e:"of"},
+{h:"הַשּׁוּק.",t:"hashuk",e:"the market"}
+],tr:"They met in Independence Park, far from the ears of the market."},
+
+{w:[
+{h:"חִילָה",t:"Khila",e:"Hila"},
+{h:"סִפְּרָה",t:"sipra",e:"told"},
+{h:"לָהּ",t:"la",e:"her"},
+{h:"שֶׁיּוֹסֵף",t:"sheYosef",e:"that Yosef"},
+{h:"הֶחְזִיק",t:"hekhzik",e:"held"},
+{h:"מִסְמָכִים",t:"mismakhim",e:"documents"},
+{h:"חֲשׁוּבִים.",t:"khashuvim",e:"important"}
+],tr:"Hila told her that Yosef held important documents."},
+
+{w:[
+{h:"הַמִּסְמָכִים",t:"hamismakhim",e:"the documents"},
+{h:"הוֹכִיחוּ",t:"hokhikhu",e:"proved"},
+{h:"שֶׁאִישׁ",t:"she'ish",e:"that a man of"},
+{h:"עֲסָקִים",t:"asakim",e:"business"},
+{h:"בְּשֵׁם",t:"beshem",e:"by the name of"},
+{h:"גִּדְעוֹן",t:"Gid'on",e:"Gideon (name)"},
+{h:"פֶּרֶץ",t:"Perets",e:"Peretz (name)"},
+{h:"שִׁלֵּם",t:"shilem",e:"paid"},
+{h:"שֹׁחַד",t:"shokhad",e:"bribe"},
+{h:"לָעִירִיָּה.",t:"la'iriya",e:"to the municipality"}
+],tr:"The documents proved that a businessman named Gideon Peretz paid bribes to the municipality."},
+
+{w:[
+{h:"פֶּרֶץ",t:"Perets",e:"Peretz"},
+{h:"רָצָה",t:"ratsa",e:"wanted"},
+{h:"לִבְנוֹת",t:"livnot",e:"to build"},
+{h:"מֶרְכָּז",t:"merkaz",e:"center of"},
+{h:"קְנִיּוֹת",t:"kniyot",e:"shopping"},
+{h:"חָדָשׁ",t:"khadash",e:"new"},
+{h:"בִּמְקוֹם",t:"bimkom",e:"in the place of"},
+{h:"הַשּׁוּק",t:"hashuk",e:"the market"},
+{h:"הַיָּשָׁן.",t:"hayashan",e:"the old"}
+],tr:"Peretz wanted to build a new shopping center in place of the old market."},
+
+{w:[
+{h:"\"הוּא",t:"hu",e:"he"},
+{h:"מְנַסֶּה",t:"menase",e:"is trying"},
+{h:"לְסַלֵּק",t:"lesalek",e:"to remove"},
+{h:"אֶת",t:"et",e:"(object marker)"},
+{h:"הַמּוֹכְרִים",t:"hamokhrim",e:"the sellers"},
+{h:"הַוָּתִיקִים",t:"havatikim",e:"the veteran"},
+{h:"אֶחָד",t:"ekhad",e:"one"},
+{h:"אַחֲרֵי",t:"akharei",e:"after"},
+{h:"אֶחָד,\"",t:"ekhad",e:"one"},
+{h:"אָמְרָה",t:"amra",e:"said (f)"},
+{h:"חִילָה.",t:"Khila",e:"Hila"}
+],tr:"\"He's trying to get rid of the veteran sellers one by one,\" said Hila."},
+
+{p:true,w:[
+{h:"רוּת",t:"Rut",e:"Rut"},
+{h:"חָזְרָה",t:"khazra",e:"returned"},
+{h:"לַשּׁוּק.",t:"lashuk",e:"to the market"},
+{h:"הַפַּעַם",t:"hapa'am",e:"this time"},
+{h:"הִיא",t:"hi",e:"she"},
+{h:"חִפְּשָׂה",t:"khipsa",e:"looked for"},
+{h:"אֶת",t:"et",e:"(object marker)"},
+{h:"סָאמִיר,",t:"Samir",e:"Samir (name)"},
+{h:"מוֹכֵר",t:"mokher",e:"seller of"},
+{h:"הַבַּקְלָאוָה.",t:"habaklava",e:"the baklava"}
+],tr:"Rut returned to the market. This time she looked for Samir, the baklava seller."},
+
+{w:[
+{h:"סָאמִיר",t:"Samir",e:"Samir"},
+{h:"הָיָה",t:"haya",e:"was"},
+{h:"חָבֵר",t:"khaver",e:"friend"},
+{h:"טוֹב",t:"tov",e:"good"},
+{h:"שֶׁל",t:"shel",e:"of"},
+{h:"יוֹסֵף.",t:"Yosef",e:"Yosef"},
+{h:"הֵם",t:"hem",e:"they"},
+{h:"שָׁתוּ",t:"shatu",e:"drank"},
+{h:"קָפֶה",t:"kafe",e:"coffee"},
+{h:"יַחַד",t:"yakhad",e:"together"},
+{h:"כָּל",t:"kol",e:"every"},
+{h:"בֹּקֶר.",t:"boker",e:"morning"}
+],tr:"Samir was a good friend of Yosef. They drank coffee together every morning."},
+
+{w:[
+{h:"\"בַּלַּיְלָה",t:"balayla",e:"in the night"},
+{h:"הַהוּא",t:"hahu",e:"that"},
+{h:"רָאִיתִי",t:"ra'iti",e:"I saw"},
+{h:"מְכוֹנִית",t:"mekhonit",e:"a car"},
+{h:"יֹקְרָה",t:"yokra",e:"luxury"},
+{h:"חוֹנָה",t:"khona",e:"parked"},
+{h:"לְיַד",t:"leyad",e:"next to"},
+{h:"הַשּׁוּק,\"",t:"hashuk",e:"the market"},
+{h:"אָמַר",t:"amar",e:"said"},
+{h:"סָאמִיר.",t:"Samir",e:"Samir"}
+],tr:"\"That night I saw a luxury car parked near the market,\" said Samir."},
+
+{w:[
+{h:"\"הַמְּכוֹנִית",t:"hamekhonit",e:"the car"},
+{h:"הַזֹּאת",t:"hazot",e:"this"},
+{h:"לֹא",t:"lo",e:"not"},
+{h:"שַׁיֶּכֶת",t:"shayekhet",e:"belongs"},
+{h:"לְאַף",t:"le'af",e:"to any"},
+{h:"אֶחָד",t:"ekhad",e:"one"},
+{h:"מֵהַשּׁוּק.",t:"mehashuk",e:"from the market"},
+{h:"הִיא",t:"hi",e:"she/it"},
+{h:"הָיְתָה",t:"hayta",e:"was"},
+{h:"שְׁחוֹרָה",t:"shkhora",e:"black"},
+{h:"וּגְדוֹלָה.\"",t:"ugdola",e:"and big"}
+],tr:"\"That car doesn't belong to anyone from the market. It was black and big.\""},
+
+{p:true,w:[
+{h:"בְּיוֹם",t:"beyom",e:"on the day of"},
+{h:"שִׁשִּׁי,",t:"shishi",e:"Friday"},
+{h:"רוּת",t:"Rut",e:"Rut"},
+{h:"נָסְעָה",t:"nas'a",e:"drove"},
+{h:"לַאֲרוּחַת",t:"la'arukhat",e:"to the meal of"},
+{h:"עֶרֶב",t:"erev",e:"evening"},
+{h:"אֵצֶל",t:"etsel",e:"at the home of"},
+{h:"הוֹרֶיהָ",t:"horeha",e:"her parents"},
+{h:"בְּקַטַמוֹן.",t:"beKatamon",e:"in Katamon"}
+],tr:"On Friday, Rut drove to dinner at her parents' house in Katamon."},
+
+{w:[
+{h:"אִמָּא",t:"ima",e:"mom"},
+{h:"שֶׁלָּהּ",t:"shela",e:"her"},
+{h:"הֵכִינָה",t:"hekhina",e:"prepared"},
+{h:"חַלָּה,",t:"khala",e:"challah"},
+{h:"מָרָק",t:"marak",e:"soup"},
+{h:"וְסָלָטִים.",t:"vesalatim",e:"and salads"},
+{h:"הָרֵיחַ",t:"harei'akh",e:"the smell"},
+{h:"שֶׁל",t:"shel",e:"of"},
+{h:"הָאֹכֶל",t:"ha'okhel",e:"the food"},
+{h:"מִלֵּא",t:"mile",e:"filled"},
+{h:"אֶת",t:"et",e:"(object marker)"},
+{h:"הַבַּיִת.",t:"habayit",e:"the house"}
+],tr:"Her mother prepared challah, soup and salads. The smell of the food filled the house."},
+
+{w:[
+{h:"\"מָתַי",t:"matai",e:"when"},
+{h:"תִּמְצְאִי",t:"timts'i",e:"will you find (f)"},
+{h:"מִישֶׁהוּ?\"",t:"mishehu",e:"someone"},
+{h:"שָׁאֲלָה",t:"sha'ala",e:"asked"},
+{h:"אִמָּא.",t:"ima",e:"mom"},
+{h:"רוּת",t:"Rut",e:"Rut"},
+{h:"חִיְּכָה",t:"khiykha",e:"smiled"},
+{h:"וְלֹא",t:"velo",e:"and not"},
+{h:"עָנְתָה.",t:"anta",e:"answered (f)"}
+],tr:"\"When will you find someone?\" asked Mom. Rut smiled and didn't answer."},
+
+{p:true,w:[
+{h:"בְּמוֹצָאֵי",t:"bemotsa'ei",e:"at the end of"},
+{h:"שַׁבָּת,",t:"Shabat",e:"Shabbat"},
+{h:"רוּת",t:"Rut",e:"Rut"},
+{h:"מָצְאָה",t:"mats'a",e:"found"},
+{h:"אֶת",t:"et",e:"(object marker)"},
+{h:"הַמְּכוֹנִית",t:"hamekhonit",e:"the car"},
+{h:"הַשְּׁחוֹרָה.",t:"hashkhora",e:"the black"},
+{h:"הִיא",t:"hi",e:"it"},
+{h:"הָיְתָה",t:"hayta",e:"was"},
+{h:"רְשׁוּמָה",t:"reshuma",e:"registered"},
+{h:"עַל",t:"al",e:"under"},
+{h:"שֵׁם",t:"shem",e:"the name of"},
+{h:"הָעוֹזֵר",t:"ha'ozer",e:"the assistant"},
+{h:"שֶׁל",t:"shel",e:"of"},
+{h:"פֶּרֶץ.",t:"Perets",e:"Peretz"}
+],tr:"On Saturday night, Rut found the black car. It was registered to Peretz's assistant."},
+
+{w:[
+{h:"רוּת",t:"Rut",e:"Rut"},
+{h:"הֶחְלִיטָה",t:"hekhlita",e:"decided"},
+{h:"לָלֶכֶת",t:"lalekhet",e:"to go"},
+{h:"לַשּׁוּק.",t:"lashuk",e:"to the market"},
+{h:"בְּמוֹצָאֵי",t:"bemotsa'ei",e:"on the evening after"},
+{h:"שַׁבָּת",t:"Shabat",e:"Shabbat"},
+{h:"הַשּׁוּק",t:"hashuk",e:"the market"},
+{h:"חַי",t:"khai",e:"alive"},
+{h:"וְתוֹסֵס.",t:"vetoses",e:"and bustling"}
+],tr:"Rut decided to go to the market. On Saturday night the market is alive and bustling."},
+
+{w:[
+{h:"הַבָּרִים",t:"habarim",e:"the bars"},
+{h:"מְלֵאִים,",t:"mele'im",e:"are full"},
+{h:"מוּסִיקָה",t:"musika",e:"music"},
+{h:"מִתְנַגֶּנֶת,",t:"mitnagenet",e:"plays"},
+{h:"אֲנָשִׁים",t:"anashim",e:"people"},
+{h:"צוֹחֲקִים",t:"tsokhakim",e:"laugh"},
+{h:"וְשׁוֹתִים.",t:"veshotim",e:"and drink"}
+],tr:"The bars are full, music plays, people laugh and drink."},
+
+{w:[
+{h:"רוּת",t:"Rut",e:"Rut"},
+{h:"מָצְאָה",t:"mats'a",e:"found"},
+{h:"אֶת",t:"et",e:"(object marker)"},
+{h:"גִּדְעוֹן",t:"Gid'on",e:"Gideon"},
+{h:"פֶּרֶץ",t:"Perets",e:"Peretz"},
+{h:"יוֹשֵׁב",t:"yoshev",e:"sitting"},
+{h:"בְּבָר",t:"bebar",e:"in a bar"},
+{h:"מוֹדֶרְנִי",t:"moderni",e:"modern"},
+{h:"בַּקָּצֶה",t:"bakatse",e:"at the end"},
+{h:"שֶׁל",t:"shel",e:"of"},
+{h:"הַשּׁוּק.",t:"hashuk",e:"the market"}
+],tr:"Rut found Gideon Peretz sitting in a modern bar at the end of the market."},
+
+{p:true,w:[
+{h:"\"אֲנִי",t:"ani",e:"I"},
+{h:"יוֹדַעַת",t:"yoda'at",e:"know (f)"},
+{h:"מָה",t:"ma",e:"what"},
+{h:"עָשִׂיתָ,\"",t:"asita",e:"you did"},
+{h:"אָמְרָה",t:"amra",e:"said (f)"},
+{h:"רוּת.",t:"Rut",e:"Rut"},
+{h:"\"יֵשׁ",t:"yesh",e:"there is"},
+{h:"לִי",t:"li",e:"to me"},
+{h:"אֶת",t:"et",e:"(object marker)"},
+{h:"הַמִּסְמָכִים.\"",t:"hamismakhim",e:"the documents"}
+],tr:"\"I know what you did,\" said Rut. \"I have the documents.\""},
+
+{w:[
+{h:"פֶּרֶץ",t:"Perets",e:"Peretz"},
+{h:"חִיֵּךְ",t:"khiyekh",e:"smiled"},
+{h:"חִיּוּךְ",t:"khiyukh",e:"a smile"},
+{h:"קַר.",t:"kar",e:"cold"},
+{h:"\"אֲנִי",t:"ani",e:"I"},
+{h:"לֹא",t:"lo",e:"not"},
+{h:"הָרַגְתִּי",t:"haragti",e:"killed"},
+{h:"אֶת",t:"et",e:"(object marker)"},
+{h:"יוֹסֵף,\"",t:"Yosef",e:"Yosef"},
+{h:"הוּא",t:"hu",e:"he"},
+{h:"אָמַר.",t:"amar",e:"said"}
+],tr:"Peretz smiled a cold smile. \"I didn't kill Yosef,\" he said."},
+
+{w:[
+{h:"\"יוֹסֵף",t:"Yosef",e:"Yosef"},
+{h:"הָיָה",t:"haya",e:"was"},
+{h:"הַשֻּׁתָּף",t:"hashutaf",e:"the partner"},
+{h:"שֶׁלִּי,",t:"sheli",e:"my"},
+{h:"לֹא",t:"lo",e:"not"},
+{h:"הָאוֹיֵב",t:"ha'oyev",e:"the enemy"},
+{h:"שֶׁלִּי.",t:"sheli",e:"my"},
+{h:"מִישֶׁהוּ",t:"mishehu",e:"someone"},
+{h:"אַחֵר",t:"akher",e:"else"},
+{h:"הָרַג",t:"harag",e:"killed"},
+{h:"אוֹתוֹ.\"",t:"oto",e:"him"}
+],tr:"\"Yosef was my partner, not my enemy. Someone else killed him.\""},
+
+{p:true,w:[
+{h:"רוּת",t:"Rut",e:"Rut"},
+{h:"לֹא",t:"lo",e:"not"},
+{h:"הֶאֱמִינָה",t:"he'emina",e:"believed"},
+{h:"לוֹ,",t:"lo",e:"him"},
+{h:"אֲבָל",t:"aval",e:"but"},
+{h:"מַשֶּׁהוּ",t:"mashehu",e:"something"},
+{h:"בַּקּוֹל",t:"bakol",e:"in the voice"},
+{h:"שֶׁלּוֹ",t:"shelo",e:"his"},
+{h:"נִשְׁמַע",t:"nishma",e:"sounded"},
+{h:"אֲמִתִּי.",t:"amiti",e:"true"}
+],tr:"Rut didn't believe him, but something in his voice sounded true."},
+
+{w:[
+{h:"הִיא",t:"hi",e:"she"},
+{h:"חָזְרָה",t:"khazra",e:"returned"},
+{h:"לִבְדֹּק",t:"livdok",e:"to check"},
+{h:"אֶת",t:"et",e:"(object marker)"},
+{h:"הָרְאָיוֹת",t:"hare'ayot",e:"the evidence"},
+{h:"מֵהַהַתְחָלָה.",t:"mehahatkhala",e:"from the beginning"}
+],tr:"She went back to check the evidence from the beginning."},
+
+{w:[
+{h:"פִּתְאוֹם",t:"pit'om",e:"suddenly"},
+{h:"הִיא",t:"hi",e:"she"},
+{h:"הֵבִינָה:",t:"hevina",e:"understood"},
+{h:"יוֹסֵף",t:"Yosef",e:"Yosef"},
+{h:"הָיָה",t:"haya",e:"was"},
+{h:"חַיָּב",t:"khayav",e:"owed"},
+{h:"כֶּסֶף",t:"kesef",e:"money"},
+{h:"לְאֶחָד",t:"le'ekhad",e:"to one"},
+{h:"מֵהַמּוֹכְרִים",t:"mehamоkhrim",e:"of the sellers"},
+{h:"בַּשּׁוּק.",t:"bashuk",e:"in the market"}
+],tr:"Suddenly she understood: Yosef owed money to one of the sellers in the market."},
+
+{w:[
+{h:"הָרוֹצֵחַ",t:"harotse'akh",e:"the killer"},
+{h:"לֹא",t:"lo",e:"not"},
+{h:"הָיָה",t:"haya",e:"was"},
+{h:"אִישׁ",t:"ish",e:"a man of"},
+{h:"עֲסָקִים",t:"asakim",e:"business"},
+{h:"גָּדוֹל,",t:"gadol",e:"big"},
+{h:"אֶלָּא",t:"ela",e:"but rather"},
+{h:"שָׁכֵן",t:"shakhen",e:"a neighbor"},
+{h:"שֶׁפָּחַד",t:"shepakhad",e:"who feared"},
+{h:"שֶׁהַחוֹב",t:"shehakhov",e:"that the debt"},
+{h:"שֶׁלּוֹ",t:"shelo",e:"his"},
+{h:"יִתְגַּלֶּה.",t:"yitgale",e:"would be revealed"}
+],tr:"The killer was not a big businessman, but a neighbor who feared his debt would be revealed."},
+
+{w:[
+{h:"רוּת",t:"Rut",e:"Rut"},
+{h:"עָצְרָה",t:"atsra",e:"arrested"},
+{h:"אֶת",t:"et",e:"(object marker)"},
+{h:"הָרוֹצֵחַ",t:"harotse'akh",e:"the killer"},
+{h:"בַּבֹּקֶר",t:"baboker",e:"in the morning"},
+{h:"שֶׁלְּמָחֳרָת,",t:"shelmaakhorat",e:"of the next day"},
+{h:"לְיַד",t:"leyad",e:"next to"},
+{h:"הַדּוּכָן",t:"hadukhan",e:"the stall"},
+{h:"שֶׁלּוֹ.",t:"shelo",e:"his"}
+],tr:"Rut arrested the killer the next morning, next to his stall."},
+
+{p:true,w:[
+{h:"הַשּׁוּק",t:"hashuk",e:"the market"},
+{h:"הִמְשִׁיךְ",t:"himshikh",e:"continued"},
+{h:"לִחְיוֹת.",t:"likhyot",e:"to live"},
+{h:"הַדּוּכָנִים",t:"hadukhanim",e:"the stalls"},
+{h:"נִפְתְּחוּ",t:"niftkhu",e:"opened"},
+{h:"כְּמוֹ",t:"kmo",e:"like"},
+{h:"כָּל",t:"kol",e:"every"},
+{h:"בֹּקֶר.",t:"boker",e:"morning"}
+],tr:"The market continued to live. The stalls opened like every morning."},
+
+{w:[
+{h:"רוּת",t:"Rut",e:"Rut"},
+{h:"קָנְתָה",t:"kanta",e:"bought"},
+{h:"בַּקְלָאוָה",t:"baklava",e:"baklava"},
+{h:"מֵסָאמִיר",t:"meSamir",e:"from Samir"},
+{h:"וְתַבְלִינִים",t:"vetavlinim",e:"and spices"},
+{h:"מֵהַדּוּכָן",t:"mehadukhan",e:"from the stall"},
+{h:"שֶׁל",t:"shel",e:"of"},
+{h:"יוֹסֵף,",t:"Yosef",e:"Yosef"},
+{h:"שֶׁעַכְשָׁו",t:"she'akhshav",e:"that now"},
+{h:"הַבֵּן",t:"haben",e:"the son"},
+{h:"שֶׁלּוֹ",t:"shelo",e:"his"},
+{h:"נִהֵל.",t:"nihel",e:"managed"}
+],tr:"Rut bought baklava from Samir and spices from Yosef's stall, which his son now managed."},
+
+{w:[
+{h:"הִיא",t:"hi",e:"she"},
+{h:"הָלְכָה",t:"halkha",e:"walked"},
+{h:"דֶּרֶךְ",t:"derekh",e:"through"},
+{h:"הַסִּמְטָאוֹת",t:"hasimta'ot",e:"the alleys"},
+{h:"הַצָּרוֹת,",t:"hatsarot",e:"the narrow"},
+{h:"וְהַשֶּׁמֶשׁ",t:"vehashemesh",e:"and the sun"},
+{h:"שֶׁל",t:"shel",e:"of"},
+{h:"יְרוּשָׁלַיִם",t:"Yerushalayim",e:"Jerusalem"},
+{h:"הֵאִירָה",t:"he'ira",e:"lit up"},
+{h:"אֶת",t:"et",e:"(object marker)"},
+{h:"הָאֲבָנִים",t:"ha'avanim",e:"the stones"},
+{h:"הָעַתִּיקוֹת.",t:"ha'atikot",e:"the ancient"}
+],tr:"She walked through the narrow alleys, and Jerusalem's sun lit up the ancient stones."},
+
+{w:[
+{h:"הַשּׁוּק",t:"hashuk",e:"the market"},
+{h:"שָׁמַר",t:"shamar",e:"kept"},
+{h:"עַל",t:"al",e:"on"},
+{h:"הַסּוֹדוֹת",t:"hasodot",e:"the secrets"},
+{h:"שֶׁלּוֹ,",t:"shelo",e:"its"},
+{h:"כְּמוֹ",t:"kmo",e:"like"},
+{h:"תָּמִיד.",t:"tamid",e:"always"}
+],tr:"The market kept its secrets, as always."}
+]
+},
+// ──────────────────────────────────────────────
+// STORY 2 — Romance
+// ──────────────────────────────────────────────
+{
+  title:"קָפֶה הָפוּךְ בְּפְלוֹרֶנְטִין",
+  titleTranslit:"Kafe Hafukh beFlorentin",
+  titleEnglish:"Cappuccino in Florentin",
+  genre:"Romance",
+  icon:"❤️",
+  sentences:[
+{p:true,w:[
+{h:"נֹעָה",t:"No'a",e:"Noa (name)"},
+{h:"יָשְׁבָה",t:"yashva",e:"sat"},
+{h:"בְּבֵית",t:"beveit",e:"in the house of"},
+{h:"קָפֶה",t:"kafe",e:"coffee"},
+{h:"קָטָן",t:"katan",e:"small"},
+{h:"בִּרְחוֹב",t:"birkhov",e:"on the street of"},
+{h:"פְלוֹרֶנְטִין",t:"Florentin",e:"Florentin"},
+{h:"בְּתֵל",t:"beTel",e:"in Tel"},
+{h:"אָבִיב.",t:"Aviv",e:"Aviv"}
+],tr:"Noa sat in a small café on Florentin Street in Tel Aviv."},
+
+{w:[
+{h:"הִיא",t:"hi",e:"she"},
+{h:"עָבְדָה",t:"avda",e:"worked"},
+{h:"עַל",t:"al",e:"on"},
+{h:"הַמַּחְשֵׁב",t:"hamakhshev",e:"the computer"},
+{h:"הַנַּיָּד",t:"hanayad",e:"portable"},
+{h:"שֶׁלָּהּ,",t:"shela",e:"her"},
+{h:"מְעַצֶּבֶת",t:"me'atsevet",e:"designing"},
+{h:"כְּרָזָה",t:"keraza",e:"a poster"},
+{h:"לְגַלֶּרְיָה",t:"legalerya",e:"for a gallery"},
+{h:"מְקוֹמִית.",t:"mekomit",e:"local"}
+],tr:"She worked on her laptop, designing a poster for a local gallery."},
+
+{w:[
+{h:"הִיא",t:"hi",e:"she"},
+{h:"הִזְמִינָה",t:"hizmina",e:"ordered"},
+{h:"אֶת",t:"et",e:"(object marker)"},
+{h:"הַקָּפֶה",t:"hakafe",e:"the coffee"},
+{h:"הָפוּךְ",t:"hafukh",e:"upside-down"},
+{h:"הַשְּׁלִישִׁי",t:"hashlishi",e:"the third"},
+{h:"שֶׁלָּהּ",t:"shela",e:"her"},
+{h:"הַיּוֹם.",t:"hayom",e:"today"}
+],tr:"She ordered her third cappuccino of the day."},
+
+{p:true,w:[
+{h:"בָּחוּר",t:"bakhur",e:"a young man"},
+{h:"נִכְנַס",t:"nikhnas",e:"entered"},
+{h:"לְבֵית",t:"leveit",e:"to the house of"},
+{h:"הַקָּפֶה",t:"hakafe",e:"the coffee"},
+{h:"עִם",t:"im",e:"with"},
+{h:"נַרְתִּיק",t:"nartik",e:"a case"},
+{h:"שֶׁל",t:"shel",e:"of"},
+{h:"גִּיטָרָה.",t:"gitara",e:"guitar"}
+],tr:"A young man entered the café carrying a guitar case."},
+
+{w:[
+{h:"הוּא",t:"hu",e:"he"},
+{h:"שָׁאַל",t:"sha'al",e:"asked"},
+{h:"אִם",t:"im",e:"if"},
+{h:"הַמָּקוֹם",t:"hamakom",e:"the place"},
+{h:"לְיָדָהּ",t:"leyada",e:"next to her"},
+{h:"פָּנוּי.",t:"panui",e:"is available"},
+{h:"הִיא",t:"hi",e:"she"},
+{h:"הִנְהֲנָה",t:"hinhana",e:"nodded"},
+{h:"בְּלִי",t:"bli",e:"without"},
+{h:"לְהַרִים",t:"leharim",e:"raising"},
+{h:"אֶת",t:"et",e:"(object marker)"},
+{h:"הָעֵינַיִם.",t:"ha'einayim",e:"the eyes"}
+],tr:"He asked if the seat next to her was available. She nodded without looking up."},
+
+{w:[
+{h:"שְׁמוֹ",t:"shmo",e:"his name"},
+{h:"הָיָה",t:"haya",e:"was"},
+{h:"תּוֹם.",t:"Tom",e:"Tom (name)"},
+{h:"הוּא",t:"hu",e:"he"},
+{h:"הָיָה",t:"haya",e:"was"},
+{h:"נַגָּן,",t:"nagan",e:"a musician"},
+{h:"גִּיטָרִיסְט",t:"gitarist",e:"guitarist"},
+{h:"שֶׁנִּגֵּן",t:"shenigen",e:"who played"},
+{h:"בְּבָרִים",t:"bebarim",e:"in bars"},
+{h:"קְטַנִּים.",t:"ktanim",e:"small"}
+],tr:"His name was Tom. He was a musician, a guitarist who played in small bars."},
+
+{p:true,w:[
+{h:"אַחֲרֵי",t:"akharei",e:"after"},
+{h:"כַּמָּה",t:"kama",e:"a few"},
+{h:"יָמִים,",t:"yamim",e:"days"},
+{h:"הֵם",t:"hem",e:"they"},
+{h:"נִפְגְּשׁוּ",t:"nifgeshu",e:"met"},
+{h:"שׁוּב",t:"shuv",e:"again"},
+{h:"בַּשּׁוּק",t:"bashuk",e:"in the market"},
+{h:"הַכַּרְמֶל",t:"haKarmel",e:"the Carmel"},
+{h:"בְּיוֹם",t:"beyom",e:"on the day of"},
+{h:"שִׁשִּׁי.",t:"shishi",e:"Friday"}
+],tr:"A few days later, they met again at the Carmel Market on Friday."},
+
+{w:[
+{h:"שְׁנֵיהֶם",t:"shneihem",e:"both of them"},
+{h:"קָנוּ",t:"kanu",e:"bought"},
+{h:"יְרָקוֹת",t:"yerakot",e:"vegetables"},
+{h:"לְשַׁבָּת.",t:"leShabat",e:"for Shabbat"},
+{h:"הוּא",t:"hu",e:"he"},
+{h:"קָנָה",t:"kana",e:"bought"},
+{h:"טְחִינָה,",t:"tkhina",e:"tahini"},
+{h:"הִיא",t:"hi",e:"she"},
+{h:"קָנְתָה",t:"kanta",e:"bought"},
+{h:"עֲשָׂבִים",t:"asavim",e:"herbs"},
+{h:"טְרִיִּים.",t:"tri'im",e:"fresh"}
+],tr:"Both were buying vegetables for Shabbat. He bought tahini, she bought fresh herbs."},
+
+{p:true,w:[
+{h:"דָּנָה,",t:"Dana",e:"Dana (name)"},
+{h:"הַחֲבֵרָה",t:"hakhavera",e:"the friend"},
+{h:"הַטּוֹבָה",t:"hatova",e:"the good"},
+{h:"שֶׁל",t:"shel",e:"of"},
+{h:"נֹעָה,",t:"No'a",e:"Noa"},
+{h:"שָׁכְנְעָה",t:"shikhne'a",e:"convinced"},
+{h:"אוֹתָהּ",t:"ota",e:"her"},
+{h:"לָלֶכֶת",t:"lalekhet",e:"to go"},
+{h:"לְבָר",t:"levar",e:"to a bar"},
+{h:"בְּפְלוֹרֶנְטִין.",t:"beFlorentin",e:"in Florentin"}
+],tr:"Dana, Noa's best friend, convinced her to go to a bar in Florentin."},
+
+{w:[
+{h:"בַּבָּר,",t:"babar",e:"in the bar"},
+{h:"תּוֹם",t:"Tom",e:"Tom"},
+{h:"עָלָה",t:"ala",e:"went up"},
+{h:"עַל",t:"al",e:"on"},
+{h:"הַבָּמָה",t:"habama",e:"the stage"},
+{h:"וְהִתְחִיל",t:"vehitkhil",e:"and began"},
+{h:"לְנַגֵּן.",t:"lenagen",e:"to play"},
+{h:"הַמּוּסִיקָה",t:"hamusika",e:"the music"},
+{h:"שֶׁלּוֹ",t:"shelo",e:"his"},
+{h:"הָיְתָה",t:"hayta",e:"was"},
+{h:"יָפָה",t:"yafa",e:"beautiful"},
+{h:"מְאוֹד.",t:"me'od",e:"very"}
+],tr:"In the bar, Tom went on stage and began to play. His music was very beautiful."},
+
+{w:[
+{h:"הוּא",t:"hu",e:"he"},
+{h:"שָׁר",t:"shar",e:"sang"},
+{h:"שִׁיר",t:"shir",e:"a song"},
+{h:"שֶׁהִזְכִּיר",t:"shehizkir",e:"that reminded"},
+{h:"לָהּ",t:"la",e:"her"},
+{h:"אֶת",t:"et",e:"(object marker)"},
+{h:"הַשִּׁירִים",t:"hashirim",e:"the songs"},
+{h:"שֶׁל",t:"shel",e:"of"},
+{h:"סָבְתָא",t:"savta",e:"grandmother"},
+{h:"שֶׁלָּהּ.",t:"shela",e:"her"}
+],tr:"He sang a song that reminded her of her grandmother's songs."},
+
+{p:true,w:[
+{h:"אַחֲרֵי",t:"akharei",e:"after"},
+{h:"הַהוֹפָעָה,",t:"hahofa'a",e:"the show"},
+{h:"הֵם",t:"hem",e:"they"},
+{h:"דִּבְּרוּ.",t:"dibru",e:"talked"},
+{h:"הוּא",t:"hu",e:"he"},
+{h:"שָׁאַל",t:"sha'al",e:"asked"},
+{h:"עַל",t:"al",e:"about"},
+{h:"הָעֲבוֹדָה",t:"ha'avoda",e:"the work"},
+{h:"שֶׁלָּהּ.",t:"shela",e:"her"}
+],tr:"After the show, they talked. He asked about her work."},
+
+{w:[
+{h:"הִיא",t:"hi",e:"she"},
+{h:"הֶרְאֲתָה",t:"her'ata",e:"showed"},
+{h:"לוֹ",t:"lo",e:"him"},
+{h:"אֶת",t:"et",e:"(object marker)"},
+{h:"הָאִיּוּרִים",t:"ha'iyurim",e:"the illustrations"},
+{h:"שֶׁלָּהּ",t:"shela",e:"her"},
+{h:"בַּטֶּלֶפוֹן.",t:"batelefon",e:"on the phone"},
+{h:"הוּא",t:"hu",e:"he"},
+{h:"הִתְרַגֵּשׁ",t:"hitragesh",e:"was excited"},
+{h:"בֶּאֱמֶת.",t:"be'emet",e:"truly"}
+],tr:"She showed him her illustrations on her phone. He was genuinely excited."},
+
+{p:true,w:[
+{h:"הַפְּגִישָׁה",t:"hapgisha",e:"the meeting"},
+{h:"הָרִאשׁוֹנָה",t:"harishona",e:"the first"},
+{h:"שֶׁלָּהֶם",t:"shelahem",e:"their"},
+{h:"הָיְתָה",t:"hayta",e:"was"},
+{h:"בְּבֵית",t:"beveit",e:"in the house of"},
+{h:"חוּמוּס",t:"khumus",e:"hummus"},
+{h:"בְּיָפוֹ.",t:"beYafo",e:"in Jaffa"}
+],tr:"Their first date was at a hummus restaurant in Jaffa."},
+
+{w:[
+{h:"הֵם",t:"hem",e:"they"},
+{h:"אָכְלוּ",t:"akhlu",e:"ate"},
+{h:"חוּמוּס",t:"khumus",e:"hummus"},
+{h:"עִם",t:"im",e:"with"},
+{h:"פִּיתָה",t:"pita",e:"pita"},
+{h:"חַמָּה",t:"khama",e:"warm"},
+{h:"וְהִתְוַכְּחוּ",t:"vehitvakhu",e:"and argued"},
+{h:"אִם",t:"im",e:"if"},
+{h:"חוּמוּס",t:"khumus",e:"hummus"},
+{h:"צָרִיךְ",t:"tsarikh",e:"needs"},
+{h:"פוּל",t:"ful",e:"fava beans"},
+{h:"אוֹ",t:"o",e:"or"},
+{h:"לֹא.",t:"lo",e:"not"}
+],tr:"They ate hummus with warm pita and argued about whether hummus needs fava beans or not."},
+
+{w:[
+{h:"אַחַר",t:"akhar",e:"after"},
+{h:"כָּךְ",t:"kakh",e:"that"},
+{h:"הֵם",t:"hem",e:"they"},
+{h:"הָלְכוּ",t:"halkhu",e:"walked"},
+{h:"לְאֹרֶךְ",t:"le'orekh",e:"along"},
+{h:"נָמָל",t:"namal",e:"the port of"},
+{h:"יָפוֹ",t:"Yafo",e:"Jaffa"},
+{h:"בִּשְׁקִיעָה.",t:"bishki'a",e:"at sunset"}
+],tr:"Afterwards they walked along the Jaffa port at sunset."},
+
+{w:[
+{h:"הוּא",t:"hu",e:"he"},
+{h:"סִפֵּר",t:"siper",e:"told"},
+{h:"לָהּ",t:"la",e:"her"},
+{h:"עַל",t:"al",e:"about"},
+{h:"הַחַיִּים",t:"hakhayim",e:"the life"},
+{h:"בַּקִּבּוּץ",t:"bakibbuts",e:"in the kibbutz"},
+{h:"בַּגָּלִיל.",t:"baGalil",e:"in the Galilee"},
+{h:"הִיא",t:"hi",e:"she"},
+{h:"סִפְּרָה",t:"sipra",e:"told"},
+{h:"לוֹ",t:"lo",e:"him"},
+{h:"עַל",t:"al",e:"about"},
+{h:"בְּאֵר",t:"Be'er",e:"Be'er"},
+{h:"שֶׁבַע.",t:"Sheva",e:"Sheva"}
+],tr:"He told her about life on the kibbutz in the Galilee. She told him about Be'er Sheva."},
+
+{p:true,w:[
+{h:"אֲבָל",t:"aval",e:"but"},
+{h:"אָז",t:"az",e:"then"},
+{h:"הִגִּיעוּ",t:"higi'u",e:"arrived"},
+{h:"הַבְּעָיוֹת.",t:"habe'ayot",e:"the problems"},
+{h:"נֹעָה",t:"No'a",e:"Noa"},
+{h:"קִבְּלָה",t:"kibla",e:"received"},
+{h:"הַצָּעַת",t:"hatsa'at",e:"an offer of"},
+{h:"עֲבוֹדָה",t:"avoda",e:"work"},
+{h:"בְּחֶבְרַת",t:"bekhevrat",e:"at a company of"},
+{h:"הַיְטֶק",t:"haitek",e:"high-tech"},
+{h:"בְּהֶרְצְלִיָּה.",t:"beHertsliya",e:"in Herzliya"}
+],tr:"But then the problems came. Noa received a job offer at a high-tech company in Herzliya."},
+
+{w:[
+{h:"תּוֹם",t:"Tom",e:"Tom"},
+{h:"קִבֵּל",t:"kibel",e:"received"},
+{h:"הַזְמָנָה",t:"hazmana",e:"an invitation"},
+{h:"לְנַגֵּן",t:"lenagen",e:"to play"},
+{h:"בְּבֶרְלִין",t:"beBerlin",e:"in Berlin"},
+{h:"לִשְׁלוֹשָׁה",t:"lishlosha",e:"for three"},
+{h:"חוֹדָשִׁים.",t:"khodashim",e:"months"},
+{h:"הַחֲלוֹם",t:"hakhlom",e:"the dream"},
+{h:"שֶׁלּוֹ.",t:"shelo",e:"his"}
+],tr:"Tom received an invitation to play in Berlin for three months. His dream."},
+
+{w:[
+{h:"הֵם",t:"hem",e:"they"},
+{h:"רָבוּ",t:"ravu",e:"argued"},
+{h:"בְּשַׂדְרוֹת",t:"beSadrot",e:"on the Boulevard of"},
+{h:"רוֹטְשִׁילְד.",t:"Rotshild",e:"Rothschild"},
+{h:"הִיא",t:"hi",e:"she"},
+{h:"אָמְרָה",t:"amra",e:"said"},
+{h:"שֶׁהוּא",t:"shehu",e:"that he"},
+{h:"תָּמִיד",t:"tamid",e:"always"},
+{h:"בּוֹרֵחַ.",t:"bore'akh",e:"runs away"}
+],tr:"They argued on Rothschild Boulevard. She said he always runs away."},
+
+{w:[
+{h:"הוּא",t:"hu",e:"he"},
+{h:"אָמַר",t:"amar",e:"said"},
+{h:"שֶׁהִיא",t:"shehi",e:"that she"},
+{h:"מְפַחֶדֶת",t:"mefakhedet",e:"is afraid"},
+{h:"לִקְפֹּץ",t:"likpots",e:"to jump"},
+{h:"וְלָקַחַת",t:"velakakhat",e:"and to take"},
+{h:"סִיכּוּן.",t:"sikun",e:"a risk"}
+],tr:"He said she is afraid to jump and take a risk."},
+
+{p:true,w:[
+{h:"הֵם",t:"hem",e:"they"},
+{h:"הִפְסִיקוּ",t:"hifsiku",e:"stopped"},
+{h:"לְדַבֵּר.",t:"ledaber",e:"to talk"},
+{h:"נֹעָה",t:"No'a",e:"Noa"},
+{h:"הָלְכָה",t:"halkha",e:"walked"},
+{h:"לְבַד",t:"levad",e:"alone"},
+{h:"עַל",t:"al",e:"on"},
+{h:"הַטַּיֶּלֶת",t:"hatayelet",e:"the promenade"},
+{h:"בַּלַּיְלָה.",t:"balayla",e:"at night"}
+],tr:"They stopped talking. Noa walked alone on the promenade at night."},
+
+{w:[
+{h:"הִיא",t:"hi",e:"she"},
+{h:"הִסְתַּכְּלָה",t:"histakla",e:"watched"},
+{h:"עַל",t:"al",e:"at"},
+{h:"הַגַּלִּים",t:"hagalim",e:"the waves"},
+{h:"וְחָשְׁבָה",t:"vekhashva",e:"and thought"},
+{h:"עָלָיו.",t:"alav",e:"about him"},
+{h:"הָעִיר",t:"ha'ir",e:"the city"},
+{h:"הִרְגִּישָׁה",t:"hirgisha",e:"felt"},
+{h:"שׁוֹנָה",t:"shona",e:"different"},
+{h:"בְּלַעְדָּיו.",t:"bil'adav",e:"without him"}
+],tr:"She watched the waves and thought about him. The city felt different without him."},
+
+{p:true,w:[
+{h:"בְּפוּרִים,",t:"bePurim",e:"on Purim"},
+{h:"דָּנָה",t:"Dana",e:"Dana"},
+{h:"גָּרְרָה",t:"garera",e:"dragged"},
+{h:"אֶת",t:"et",e:"(object marker)"},
+{h:"נֹעָה",t:"No'a",e:"Noa"},
+{h:"לְמְסִבָּה",t:"lemesiba",e:"to a party"},
+{h:"בִּנְוֵה",t:"biNve",e:"in Neve"},
+{h:"צֶדֶק.",t:"Tsedek",e:"Tsedek"}
+],tr:"On Purim, Dana dragged Noa to a party in Neve Tsedek."},
+
+{w:[
+{h:"כֻּלָּם",t:"kulam",e:"everyone"},
+{h:"הָיוּ",t:"hayu",e:"were"},
+{h:"בְּתַחְפֹּשׂוֹת.",t:"betakhposot",e:"in costumes"},
+{h:"נֹעָה",t:"No'a",e:"Noa"},
+{h:"רָאֲתָה",t:"ra'ata",e:"saw"},
+{h:"אֶת",t:"et",e:"(object marker)"},
+{h:"תּוֹם",t:"Tom",e:"Tom"},
+{h:"מֵעֵבֶר",t:"me'ever",e:"across"},
+{h:"לַחֶדֶר.",t:"lakheder",e:"the room"}
+],tr:"Everyone was in costumes. Noa saw Tom across the room."},
+
+{w:[
+{h:"הוּא",t:"hu",e:"he"},
+{h:"הִתְחַפֵּשׂ",t:"hitkh apes",e:"dressed up"},
+{h:"לְקִבּוּצְנִיק",t:"lekibutsnik",e:"as a kibbutznik"},
+{h:"מִשְּׁנוֹת",t:"mishnot",e:"from the years of"},
+{h:"הַחֲמִשִּׁים",t:"hakhamishim",e:"the fifties"},
+{h:"עִם",t:"im",e:"with"},
+{h:"כּוֹבַע",t:"kova",e:"a hat"},
+{h:"טֶמְבֶּל.",t:"tembel",e:"tembel (bucket hat)"}
+],tr:"He was dressed as a 1950s kibbutznik with a tembel hat."},
+
+{w:[
+{h:"הִיא",t:"hi",e:"she"},
+{h:"צָחֲקָה.",t:"tsakhaka",e:"laughed"},
+{h:"הוּא",t:"hu",e:"he"},
+{h:"חִיֵּךְ.",t:"khiyekh",e:"smiled"},
+{h:"הֵם",t:"hem",e:"they"},
+{h:"יָדְעוּ",t:"yad'u",e:"knew"},
+{h:"שֶׁאִי",t:"she'i",e:"that it is not"},
+{h:"אֶפְשָׁר",t:"efshar",e:"possible"},
+{h:"לְהִמָּנַע.",t:"lehimana",e:"to avoid each other"}
+],tr:"She laughed. He smiled. They knew they couldn't avoid each other."},
+
+{p:true,w:[
+{h:"הֵם",t:"hem",e:"they"},
+{h:"יָשְׁבוּ",t:"yashvu",e:"sat"},
+{h:"עַל",t:"al",e:"on"},
+{h:"הַחוֹל",t:"hakhol",e:"the sand"},
+{h:"בִּזְרִיחָה.",t:"bizrikha",e:"at sunrise"},
+{h:"הַיָּם",t:"hayam",e:"the sea"},
+{h:"הָיָה",t:"haya",e:"was"},
+{h:"שָׁקֵט",t:"shaket",e:"quiet"},
+{h:"וּמָלֵא",t:"umale",e:"and full of"},
+{h:"אוֹר.",t:"or",e:"light"}
+],tr:"They sat on the sand at sunrise. The sea was quiet and full of light."},
+
+{w:[
+{h:"תּוֹם",t:"Tom",e:"Tom"},
+{h:"אָמַר",t:"amar",e:"said"},
+{h:"שֶׁהוּא",t:"shehu",e:"that he"},
+{h:"וִתֵּר",t:"viter",e:"gave up"},
+{h:"עַל",t:"al",e:"on"},
+{h:"בֶּרְלִין.",t:"Berlin",e:"Berlin"},
+{h:"נֹעָה",t:"No'a",e:"Noa"},
+{h:"אָמְרָה",t:"amra",e:"said"},
+{h:"שֶׁהִיא",t:"shehi",e:"that she"},
+{h:"וִתְּרָה",t:"vitra",e:"gave up"},
+{h:"עַל",t:"al",e:"on"},
+{h:"הֶרְצְלִיָּה.",t:"Hertsliya",e:"Herzliya"}
+],tr:"Tom said he gave up Berlin. Noa said she gave up Herzliya."},
+
+{w:[
+{h:"אֲבָל",t:"aval",e:"but"},
+{h:"נֹעָה",t:"No'a",e:"Noa"},
+{h:"אָמְרָה:",t:"amra",e:"said"},
+{h:"\"אֲנִי",t:"ani",e:"I"},
+{h:"לֹא",t:"lo",e:"not"},
+{h:"רוֹצָה",t:"rotsa",e:"want"},
+{h:"שֶׁתְּוַתֵּר",t:"shetevater",e:"that you give up"},
+{h:"עַל",t:"al",e:"on"},
+{h:"הַחֲלוֹם",t:"hakhlom",e:"the dream"},
+{h:"שֶׁלְּךָ",t:"shelkha",e:"your"},
+{h:"בִּגְלָלִי.\"",t:"biglali",e:"because of me"}
+],tr:"But Noa said: \"I don't want you to give up your dream because of me.\""},
+
+{p:true,w:[
+{h:"בַּסּוֹף,",t:"basof",e:"in the end"},
+{h:"תּוֹם",t:"Tom",e:"Tom"},
+{h:"נָסַע",t:"nasa",e:"traveled"},
+{h:"לְבֶרְלִין.",t:"leBerlin",e:"to Berlin"},
+{h:"אֲבָל",t:"aval",e:"but"},
+{h:"הֵם",t:"hem",e:"they"},
+{h:"נִשְׁאֲרוּ",t:"nish'aru",e:"remained"},
+{h:"יַחַד.",t:"yakhad",e:"together"}
+],tr:"In the end, Tom went to Berlin. But they stayed together."},
+
+{w:[
+{h:"בַּחֲנֻכָּה,",t:"baKhanuka",e:"on Hanukkah"},
+{h:"נֹעָה",t:"No'a",e:"Noa"},
+{h:"בָּאָה",t:"ba'a",e:"came"},
+{h:"לְבַקֵּר",t:"levaker",e:"to visit"},
+{h:"אוֹתוֹ.",t:"oto",e:"him"},
+{h:"הֵם",t:"hem",e:"they"},
+{h:"הִדְלִיקוּ",t:"hidliku",e:"lit"},
+{h:"נֵרוֹת",t:"nerot",e:"candles"},
+{h:"בַּדִּירָה",t:"badira",e:"in the apartment"},
+{h:"הַקְּטַנָּה",t:"haketana",e:"the small"},
+{h:"שֶׁלּוֹ",t:"shelo",e:"his"},
+{h:"בְּבֶרְלִין.",t:"beBerlin",e:"in Berlin"}
+],tr:"On Hanukkah, Noa came to visit him. They lit candles in his small Berlin apartment."},
+
+{w:[
+{h:"הֵם",t:"hem",e:"they"},
+{h:"אָכְלוּ",t:"akhlu",e:"ate"},
+{h:"סֻפְגָּנִיּוֹת",t:"sufganiyot",e:"jelly donuts"},
+{h:"וְהֵבִינוּ",t:"vehevinu",e:"and understood"},
+{h:"שֶׁהַמֶּרְחָק",t:"shehamerkhak",e:"that the distance"},
+{h:"לֹא",t:"lo",e:"not"},
+{h:"יָכוֹל",t:"yakhol",e:"can"},
+{h:"לִשְׁבֹּר",t:"lishbor",e:"to break"},
+{h:"אֶת",t:"et",e:"(object marker)"},
+{h:"מָה",t:"ma",e:"what"},
+{h:"שֶׁבָּנוּ.",t:"shebanu",e:"they built"}
+],tr:"They ate jelly donuts and understood that distance cannot break what they built."},
+
+{p:true,w:[
+{h:"נֹעָה",t:"No'a",e:"Noa"},
+{h:"חָזְרָה",t:"khazra",e:"returned"},
+{h:"לְאוֹתוֹ",t:"le'oto",e:"to the same"},
+{h:"בֵּית",t:"beit",e:"house of"},
+{h:"קָפֶה",t:"kafe",e:"coffee"},
+{h:"בִּפְלוֹרֶנְטִין.",t:"biFlorentin",e:"in Florentin"},
+{h:"הַמָּקוֹם",t:"hamakom",e:"the place"},
+{h:"לְיָדָהּ",t:"leyada",e:"next to her"},
+{h:"הָיָה",t:"haya",e:"was"},
+{h:"רֵיק.",t:"reik",e:"empty"}
+],tr:"Noa returned to the same café in Florentin. The seat next to her was empty."},
+
+{w:[
+{h:"הַטֶּלֶפוֹן",t:"hatelefon",e:"the phone"},
+{h:"שֶׁלָּהּ",t:"shela",e:"her"},
+{h:"רָטַט.",t:"ratat",e:"vibrated"},
+{h:"הוֹדָעָה",t:"hoda'a",e:"a message"},
+{h:"קוֹלִית",t:"kolit",e:"voice"},
+{h:"מִתּוֹם:",t:"miTom",e:"from Tom"},
+{h:"הוּא",t:"hu",e:"he"},
+{h:"מְנַגֵּן",t:"menagen",e:"plays"},
+{h:"שִׁיר",t:"shir",e:"a song"},
+{h:"חָדָשׁ",t:"khadash",e:"new"},
+{h:"עִם",t:"im",e:"with"},
+{h:"הַשֵּׁם",t:"hashem",e:"the name"},
+{h:"שֶׁלָּהּ.",t:"shela",e:"her"}
+],tr:"Her phone vibrated. A voice message from Tom: he plays a new song with her name in it."},
+
+{w:[
+{h:"נֹעָה",t:"No'a",e:"Noa"},
+{h:"חִיְּכָה.",t:"khiykha",e:"smiled"},
+{h:"הַקָּפֶה",t:"hakafe",e:"the coffee"},
+{h:"הָפוּךְ",t:"hafukh",e:"upside-down"},
+{h:"נִהְיָה",t:"nihya",e:"became"},
+{h:"קַר,",t:"kar",e:"cold"},
+{h:"אֲבָל",t:"aval",e:"but"},
+{h:"הַלֵּב",t:"halev",e:"the heart"},
+{h:"שֶׁלָּהּ",t:"shela",e:"her"},
+{h:"הָיָה",t:"haya",e:"was"},
+{h:"חַם.",t:"kham",e:"warm"}
+],tr:"Noa smiled. The cappuccino had gone cold, but her heart was warm."}
+]
+},
+// ──────────────────────────────────────────────
+// STORY 3 — Adventure
+// ──────────────────────────────────────────────
+{
+  title:"הַמַּסָּע אֶל הַמַּכְתֵּשׁ",
+  titleTranslit:"HaMasa El HaMakhtesh",
+  titleEnglish:"The Journey to the Crater",
+  genre:"Adventure",
+  icon:"🏜️",
+  sentences:[
+{p:true,w:[
+{h:"אִיתַי",t:"Itai",e:"Itai (name)"},
+{h:"עָמַד",t:"amad",e:"stood"},
+{h:"בַּקָּצֶה",t:"bakatse",e:"at the edge"},
+{h:"שֶׁל",t:"shel",e:"of"},
+{h:"בְּאֵר",t:"Be'er",e:"Be'er"},
+{h:"שֶׁבַע",t:"Sheva",e:"Sheva"},
+{h:"וְהִסְתַּכֵּל",t:"vehistakel",e:"and looked"},
+{h:"דָּרוֹמָה,",t:"daroma",e:"southward"},
+{h:"אֶל",t:"el",e:"toward"},
+{h:"הַמִּדְבָּר.",t:"hamidbar",e:"the desert"}
+],tr:"Itai stood at the edge of Be'er Sheva and looked southward, toward the desert."},
+
+{w:[
+{h:"הוּא",t:"hu",e:"he"},
+{h:"סִיֵּם",t:"siyem",e:"finished"},
+{h:"אֶת",t:"et",e:"(object marker)"},
+{h:"הַשֵּׁרוּת",t:"hasherut",e:"the service"},
+{h:"הַצְּבָאִי",t:"hatsvai",e:"the military"},
+{h:"שֶׁלּוֹ",t:"shelo",e:"his"},
+{h:"לִפְנֵי",t:"lifnei",e:"before"},
+{h:"חֹדֶשׁ.",t:"khodesh",e:"a month"},
+{h:"הוּא",t:"hu",e:"he"},
+{h:"לֹא",t:"lo",e:"not"},
+{h:"יָשֵׁן",t:"yashen",e:"sleeps"},
+{h:"טוֹב",t:"tov",e:"well"},
+{h:"בַּלֵּילוֹת.",t:"baleilot",e:"at nights"}
+],tr:"He finished his military service a month ago. He doesn't sleep well at night."},
+
+{w:[
+{h:"הוּא",t:"hu",e:"he"},
+{h:"הֶחְלִיט",t:"hekhlit",e:"decided"},
+{h:"לָלֶכֶת",t:"lalekhet",e:"to walk"},
+{h:"אֶת",t:"et",e:"(object marker)"},
+{h:"שְׁבִיל",t:"shvil",e:"the trail of"},
+{h:"יִשְׂרָאֵל",t:"Yisra'el",e:"Israel"},
+{h:"בַּנֶּגֶב",t:"baNegev",e:"in the Negev"},
+{h:"לְבַד,",t:"levad",e:"alone"},
+{h:"כְּדֵי",t:"kedei",e:"in order to"},
+{h:"לְנַקּוֹת",t:"lenakot",e:"to clean"},
+{h:"אֶת",t:"et",e:"(object marker)"},
+{h:"הָרֹאשׁ.",t:"harosh",e:"the head"}
+],tr:"He decided to hike the Israel Trail in the Negev alone, to clear his head."},
+
+{p:true,w:[
+{h:"הַנֶּגֶב",t:"haNegev",e:"the Negev"},
+{h:"בַּבֹּקֶר",t:"baboker",e:"in the morning"},
+{h:"הַמֻּקְדָּם",t:"hamukdam",e:"the early"},
+{h:"הָיָה",t:"haya",e:"was"},
+{h:"קָרִיר,",t:"karir",e:"cool"},
+{h:"אֲבָל",t:"aval",e:"but"},
+{h:"בַּצָּהֳרַיִם",t:"batsahorayim",e:"at noon"},
+{h:"הַשֶּׁמֶשׁ",t:"hashemesh",e:"the sun"},
+{h:"הָיְתָה",t:"hayta",e:"was"},
+{h:"אַכְזָרִית.",t:"akhzarit",e:"brutal"}
+],tr:"The Negev in early morning was cool, but at noon the sun was brutal."},
+
+{w:[
+{h:"הוּא",t:"hu",e:"he"},
+{h:"הָלַךְ",t:"halakh",e:"walked"},
+{h:"דֶּרֶךְ",t:"derekh",e:"through"},
+{h:"עֲרוּצוֹת",t:"arutsot",e:"channels of"},
+{h:"נָחָל,",t:"nakhal",e:"stream"},
+{h:"לְיַד",t:"leyad",e:"next to"},
+{h:"עֲצֵי",t:"atsei",e:"trees of"},
+{h:"שִׁטָּה,",t:"shita",e:"acacia"},
+{h:"וְרָאָה",t:"vera'a",e:"and saw"},
+{h:"שׁוּעָל",t:"shu'al",e:"a fox"},
+{h:"מִדְבָּרִי.",t:"midbari",e:"of the desert"}
+],tr:"He walked through stream beds, past acacia trees, and saw a desert fox."},
+
+{w:[
+{h:"בַּלַּיְלָה",t:"balayla",e:"at night"},
+{h:"הָרִאשׁוֹן",t:"harishon",e:"the first"},
+{h:"הוּא",t:"hu",e:"he"},
+{h:"לֹא",t:"lo",e:"not"},
+{h:"הִצְלִיחַ",t:"hitsli'akh",e:"managed"},
+{h:"לִישֹׁן.",t:"lishon",e:"to sleep"},
+{h:"הוּא",t:"hu",e:"he"},
+{h:"שָׁמַע",t:"shama",e:"heard"},
+{h:"קוֹלוֹת",t:"kolot",e:"sounds"},
+{h:"בַּחוֹשֶׁךְ.",t:"bakhoshekh",e:"in the dark"}
+],tr:"On the first night he couldn't sleep. He heard sounds in the darkness."},
+
+{p:true,w:[
+{h:"בַּיּוֹם",t:"bayom",e:"on the day"},
+{h:"הַשֵּׁנִי",t:"hasheni",e:"the second"},
+{h:"הוּא",t:"hu",e:"he"},
+{h:"פָּגַשׁ",t:"pagash",e:"met"},
+{h:"אֶת",t:"et",e:"(object marker)"},
+{h:"מָיָה",t:"Maya",e:"Maya (name)"},
+{h:"לְיַד",t:"leyad",e:"next to"},
+{h:"נְקֻדַּת",t:"nekudat",e:"point of"},
+{h:"מַיִם",t:"mayim",e:"water"},
+{h:"שֶׁל",t:"shel",e:"of"},
+{h:"מַלְאַךְ",t:"mal'akh",e:"angel of"},
+{h:"שְׁבִיל.",t:"shvil",e:"the trail"}
+],tr:"On the second day he met Maya next to a trail angel's water point."},
+
+{w:[
+{h:"הִיא",t:"hi",e:"she"},
+{h:"הָיְתָה",t:"hayta",e:"was"},
+{h:"סְטוּדֶנְטִית",t:"studentit",e:"a student (f)"},
+{h:"לְבִיוֹלוֹגְיָה",t:"lebiologya",e:"of biology"},
+{h:"שֶׁחָקְרָה",t:"shekhakra",e:"who studied"},
+{h:"חַיּוֹת",t:"khayot",e:"animals of"},
+{h:"בָּר",t:"bar",e:"the wild"},
+{h:"בַּמִּדְבָּר.",t:"bamidbar",e:"in the desert"}
+],tr:"She was a biology student who studied wildlife in the desert."},
+
+{w:[
+{h:"הֵם",t:"hem",e:"they"},
+{h:"הָלְכוּ",t:"halkhu",e:"walked"},
+{h:"יַחַד.",t:"yakhad",e:"together"},
+{h:"הִיא",t:"hi",e:"she"},
+{h:"סִפְּרָה",t:"sipra",e:"told"},
+{h:"לוֹ",t:"lo",e:"him"},
+{h:"עַל",t:"al",e:"about"},
+{h:"הַיְּעֵלִים,",t:"haye'elim",e:"the ibex"},
+{h:"עַל",t:"al",e:"about"},
+{h:"הַחַיִּים",t:"hakhayim",e:"the life"},
+{h:"הַחֲבוּיִים",t:"hakhavu'im",e:"the hidden"},
+{h:"שֶׁל",t:"shel",e:"of"},
+{h:"הַמִּדְבָּר.",t:"hamidbar",e:"the desert"}
+],tr:"They walked together. She told him about the ibex, about the hidden life of the desert."},
+
+{p:true,w:[
+{h:"הֵם",t:"hem",e:"they"},
+{h:"הִגִּיעוּ",t:"higi'u",e:"arrived"},
+{h:"לִשְׂדֵה",t:"liSde",e:"to the field of"},
+{h:"בּוֹקֵר,",t:"Boker",e:"Boker"},
+{h:"הַמָּקוֹם",t:"hamakom",e:"the place"},
+{h:"שֶׁבֶּן",t:"sheBen",e:"where Ben"},
+{h:"גּוּרְיוֹן",t:"Gurion",e:"Gurion"},
+{h:"חַי",t:"khai",e:"lived"},
+{h:"בַּמִּדְבָּר.",t:"bamidbar",e:"in the desert"}
+],tr:"They arrived at Sde Boker, the place where Ben-Gurion lived in the desert."},
+
+{w:[
+{h:"מָיָה",t:"Maya",e:"Maya"},
+{h:"דִּבְּרָה",t:"dibra",e:"spoke"},
+{h:"עַל",t:"al",e:"about"},
+{h:"הַחֲלוֹם",t:"hakhlom",e:"the dream"},
+{h:"שֶׁלּוֹ",t:"shelo",e:"his"},
+{h:"לְהַפְרִיחַ",t:"lehafri'akh",e:"to make bloom"},
+{h:"אֶת",t:"et",e:"(object marker)"},
+{h:"הַמִּדְבָּר.",t:"hamidbar",e:"the desert"},
+{h:"אִיתַי",t:"Itai",e:"Itai"},
+{h:"חָשַׁב",t:"khashav",e:"thought"},
+{h:"עַל",t:"al",e:"about"},
+{h:"הִתְחַדְּשׁוּת.",t:"hitkhadshut",e:"renewal"}
+],tr:"Maya spoke about his dream to make the desert bloom. Itai thought about renewal."},
+
+{p:true,w:[
+{h:"סוּפַת",t:"sufat",e:"a storm of"},
+{h:"חוֹל",t:"khol",e:"sand"},
+{h:"הִכְרִיחָה",t:"hikhrikha",e:"forced"},
+{h:"אוֹתָם",t:"otam",e:"them"},
+{h:"לְהִסְתַּתֵּר",t:"lehistater",e:"to take shelter"},
+{h:"בְּאֹהֶל",t:"be'ohel",e:"in a tent"},
+{h:"בֶּדוּאִי.",t:"bedu'i",e:"Bedouin"}
+],tr:"A sandstorm forced them to take shelter in a Bedouin tent."},
+
+{w:[
+{h:"שָׁם",t:"sham",e:"there"},
+{h:"הֵם",t:"hem",e:"they"},
+{h:"פָּגְשׁוּ",t:"pagshu",e:"met"},
+{h:"אֶת",t:"et",e:"(object marker)"},
+{h:"סָאלִים,",t:"Salim",e:"Salim (name)"},
+{h:"רוֹעֶה",t:"ro'e",e:"a herder"},
+{h:"בֶּדוּאִי",t:"bedu'i",e:"Bedouin"},
+{h:"שֶׁהִכִּיר",t:"shehikir",e:"who knew"},
+{h:"אֶת",t:"et",e:"(object marker)"},
+{h:"הַמִּדְבָּר",t:"hamidbar",e:"the desert"},
+{h:"כְּמוֹ",t:"kmo",e:"like"},
+{h:"כַּף",t:"kaf",e:"the palm of"},
+{h:"יָדוֹ.",t:"yado",e:"his hand"}
+],tr:"There they met Salim, a Bedouin herder who knew the desert like the back of his hand."},
+
+{w:[
+{h:"סָאלִים",t:"Salim",e:"Salim"},
+{h:"הֵכִין",t:"hekhin",e:"prepared"},
+{h:"לָהֶם",t:"lahem",e:"for them"},
+{h:"תֵּה",t:"te",e:"tea"},
+{h:"עִם",t:"im",e:"with"},
+{h:"נַעֲנָע",t:"na'ana",e:"mint"},
+{h:"וְסִפֵּר",t:"vesiper",e:"and told"},
+{h:"סִפּוּרִים",t:"sipurim",e:"stories"},
+{h:"עַל",t:"al",e:"about"},
+{h:"הַמִּדְבָּר.",t:"hamidbar",e:"the desert"}
+],tr:"Salim prepared tea with mint for them and told stories about the desert."},
+
+{w:[
+{h:"הוּא",t:"hu",e:"he"},
+{h:"הִזְהִיר",t:"hizhir",e:"warned"},
+{h:"אוֹתָם",t:"otam",e:"them"},
+{h:"מִנַּחַל",t:"minakhal",e:"about a stream"},
+{h:"מְסֻכָּן",t:"mesukan",e:"dangerous"},
+{h:"שֶׁמִּתְמַלֵּא",t:"shemitmale",e:"that fills"},
+{h:"בְּלִי",t:"bli",e:"without"},
+{h:"הַתְרָאָה.",t:"hatra'a",e:"warning"}
+],tr:"He warned them about a dangerous stream that fills without warning."},
+
+{p:true,w:[
+{h:"אַחֲרֵי",t:"akharei",e:"after"},
+{h:"הַסּוּפָה,",t:"hasufa",e:"the storm"},
+{h:"הֵם",t:"hem",e:"they"},
+{h:"הִמְשִׁיכוּ.",t:"himshikhu",e:"continued"},
+{h:"אִיתַי",t:"Itai",e:"Itai"},
+{h:"הִתְחִיל",t:"hitkhil",e:"began"},
+{h:"לְדַבֵּר",t:"ledaber",e:"to talk"},
+{h:"עַל",t:"al",e:"about"},
+{h:"הַצָּבָא.",t:"hatsava",e:"the army"}
+],tr:"After the storm, they continued. Itai began to talk about the army."},
+
+{w:[
+{h:"מָיָה",t:"Maya",e:"Maya"},
+{h:"הִקְשִׁיבָה",t:"hikshiva",e:"listened"},
+{h:"בְּלִי",t:"bli",e:"without"},
+{h:"לְנַסּוֹת",t:"lenasot",e:"trying"},
+{h:"לְתַקֵּן",t:"letaken",e:"to fix"},
+{h:"שׁוּם",t:"shum",e:"any"},
+{h:"דָּבָר.",t:"davar",e:"thing"}
+],tr:"Maya listened without trying to fix anything."},
+
+{p:true,w:[
+{h:"פִּתְאוֹם",t:"pit'om",e:"suddenly"},
+{h:"הֵם",t:"hem",e:"they"},
+{h:"שָׁמְעוּ",t:"sham'u",e:"heard"},
+{h:"רַעַשׁ",t:"ra'ash",e:"a noise"},
+{h:"עָצוּם.",t:"atsum",e:"enormous"},
+{h:"שִׁטָּפוֹן!",t:"shitafon",e:"a flood!"},
+{h:"מַיִם",t:"mayim",e:"water"},
+{h:"זָרְמוּ",t:"zarmu",e:"flowed"},
+{h:"דֶּרֶךְ",t:"derekh",e:"through"},
+{h:"הַנַּחַל",t:"hanakhal",e:"the stream"},
+{h:"הַיָּבֵשׁ.",t:"hayavesh",e:"the dry"}
+],tr:"Suddenly they heard an enormous noise. A flood! Water rushed through the dry stream."},
+
+{w:[
+{h:"הוּא",t:"hu",e:"he"},
+{h:"מָשַׁךְ",t:"mashakh",e:"pulled"},
+{h:"אֶת",t:"et",e:"(object marker)"},
+{h:"מָיָה",t:"Maya",e:"Maya"},
+{h:"לְמָעְלָה,",t:"lema'la",e:"upward"},
+{h:"אֶל",t:"el",e:"to"},
+{h:"מָדַף",t:"madaf",e:"a ledge"},
+{h:"סַלְעִי",t:"sal'i",e:"rocky"},
+{h:"גָּבוֹהַּ.",t:"gavoha",e:"high"}
+],tr:"He pulled Maya upward, to a high rocky ledge."},
+
+{w:[
+{h:"הֵם",t:"hem",e:"they"},
+{h:"חִכּוּ",t:"khiku",e:"waited"},
+{h:"שָׁעוֹת",t:"sha'ot",e:"hours"},
+{h:"שֶׁהַמַּיִם",t:"shehamayim",e:"for the water"},
+{h:"יֵרְדוּ.",t:"yerdu",e:"to recede"},
+{h:"הַשָּׁמַיִם",t:"hashamayim",e:"the sky"},
+{h:"שֶׁל",t:"shel",e:"of"},
+{h:"הַמִּדְבָּר",t:"hamidbar",e:"the desert"},
+{h:"הָיוּ",t:"hayu",e:"were"},
+{h:"עֲנָקִיִּים",t:"anaki'im",e:"enormous"},
+{h:"מֵעֲלֵיהֶם.",t:"me'aleihem",e:"above them"}
+],tr:"They waited hours for the water to recede. The desert sky was enormous above them."},
+
+{p:true,w:[
+{h:"סָאלִים",t:"Salim",e:"Salim"},
+{h:"מָצָא",t:"matsa",e:"found"},
+{h:"אוֹתָם.",t:"otam",e:"them"},
+{h:"הוּא",t:"hu",e:"he"},
+{h:"עָקַב",t:"akav",e:"tracked"},
+{h:"אַחֲרֵיהֶם,",t:"akhareihem",e:"after them"},
+{h:"מוּדְאָג",t:"mud'ag",e:"worried"},
+{h:"בִּגְלַל",t:"biglal",e:"because of"},
+{h:"הַשִּׁטָּפוֹן.",t:"hashitafon",e:"the flood"}
+],tr:"Salim found them. He had tracked them, worried because of the flood."},
+
+{w:[
+{h:"הוּא",t:"hu",e:"he"},
+{h:"הוֹבִיל",t:"hovil",e:"led"},
+{h:"אוֹתָם",t:"otam",e:"them"},
+{h:"דֶּרֶךְ",t:"derekh",e:"through"},
+{h:"שְׁבִיל",t:"shvil",e:"a path"},
+{h:"נִסְתָּר",t:"nistar",e:"hidden"},
+{h:"שֶׁרַק",t:"sherak",e:"that only"},
+{h:"הַבְּדוּאִים",t:"habedu'im",e:"the Bedouins"},
+{h:"מַכִּירִים.",t:"makirim",e:"know"}
+],tr:"He led them through a hidden path that only the Bedouins know."},
+
+{p:true,w:[
+{h:"הֵם",t:"hem",e:"they"},
+{h:"הִגִּיעוּ",t:"higi'u",e:"arrived"},
+{h:"לְמִצְפֵּה",t:"leMitspe",e:"to Mitzpe"},
+{h:"רָמוֹן.",t:"Ramon",e:"Ramon"},
+{h:"הַמַּכְתֵּשׁ",t:"hamakhtesh",e:"the crater"},
+{h:"נִפְתַּח",t:"niftakh",e:"opened"},
+{h:"לִפְנֵיהֶם",t:"lifneihem",e:"before them"},
+{h:"—",t:"—",e:"—"},
+{h:"עָצוּם,",t:"atsum",e:"enormous"},
+{h:"עַתִּיק,",t:"atik",e:"ancient"},
+{h:"מַדְהִים.",t:"madhim",e:"amazing"}
+],tr:"They arrived at Mitzpe Ramon. The crater opened before them — enormous, ancient, amazing."},
+
+{w:[
+{h:"מָיָה",t:"Maya",e:"Maya"},
+{h:"הֶרְאֲתָה",t:"her'ata",e:"showed"},
+{h:"לוֹ",t:"lo",e:"him"},
+{h:"מְאֻבָּנִים",t:"me'ubanim",e:"fossils"},
+{h:"בְּקִירוֹת",t:"bekirot",e:"in the walls of"},
+{h:"הַמַּכְתֵּשׁ.",t:"hamakhtesh",e:"the crater"},
+{h:"\"פֹּה",t:"po",e:"here"},
+{h:"הָיָה",t:"haya",e:"was"},
+{h:"יָם,\"",t:"yam",e:"a sea"},
+{h:"הִיא",t:"hi",e:"she"},
+{h:"אָמְרָה.",t:"amra",e:"said"},
+{h:"\"הַכֹּל",t:"hakol",e:"everything"},
+{h:"מִשְׁתַּנֶּה.\"",t:"mishtane",e:"changes"}
+],tr:"Maya showed him fossils in the crater walls. \"There was a sea here,\" she said. \"Everything changes.\""},
+
+{p:true,w:[
+{h:"בַּלַּיְלָה",t:"balayla",e:"at night"},
+{h:"הָאַחֲרוֹן",t:"ha'akharon",e:"the last"},
+{h:"הֵם",t:"hem",e:"they"},
+{h:"יָשְׁבוּ",t:"yashvu",e:"sat"},
+{h:"עַל",t:"al",e:"on"},
+{h:"שְׂפַת",t:"sfat",e:"the edge of"},
+{h:"הַמַּכְתֵּשׁ.",t:"hamakhtesh",e:"the crater"},
+{h:"כּוֹכָבִים",t:"kokhavim",e:"stars"},
+{h:"מָלְאוּ",t:"mal'u",e:"filled"},
+{h:"אֶת",t:"et",e:"(object marker)"},
+{h:"הַשָּׁמַיִם.",t:"hashamayim",e:"the sky"}
+],tr:"On the last night they sat on the edge of the crater. Stars filled the sky."},
+
+{w:[
+{h:"אִיתַי",t:"Itai",e:"Itai"},
+{h:"יָשַׁן",t:"yashan",e:"slept"},
+{h:"כָּל",t:"kol",e:"all"},
+{h:"הַלַּיְלָה",t:"halayla",e:"the night"},
+{h:"בִּפְעַם",t:"bif'am",e:"for the time"},
+{h:"הָרִאשׁוֹנָה",t:"harishona",e:"the first"},
+{h:"מִזֶּה",t:"mize",e:"since"},
+{h:"חוֹדָשִׁים.",t:"khodashim",e:"months"}
+],tr:"Itai slept through the whole night for the first time in months."},
+
+{p:true,w:[
+{h:"בַּבֹּקֶר",t:"baboker",e:"in the morning"},
+{h:"הֵם",t:"hem",e:"they"},
+{h:"נִפְרְדוּ.",t:"nifrdu",e:"parted"},
+{h:"מָיָה",t:"Maya",e:"Maya"},
+{h:"חָזְרָה",t:"khazra",e:"returned"},
+{h:"לַמֶּחְקָר",t:"lamekhkar",e:"to the research"},
+{h:"שֶׁלָּהּ.",t:"shela",e:"her"}
+],tr:"In the morning they parted. Maya returned to her research."},
+
+{w:[
+{h:"אִיתַי",t:"Itai",e:"Itai"},
+{h:"הָלַךְ",t:"halakh",e:"walked"},
+{h:"דָּרוֹמָה",t:"daroma",e:"southward"},
+{h:"לְאֹרֶךְ",t:"le'orekh",e:"along"},
+{h:"הַשְּׁבִיל.",t:"hashvil",e:"the trail"},
+{h:"הַמִּדְבָּר",t:"hamidbar",e:"the desert"},
+{h:"הִשְׁתָּרֵעַ",t:"hishtare'a",e:"stretched"},
+{h:"לְאֵין",t:"le'ein",e:"without"},
+{h:"סוֹף.",t:"sof",e:"end"}
+],tr:"Itai walked south along the trail. The desert stretched endlessly."},
+
+{w:[
+{h:"הוּא",t:"hu",e:"he"},
+{h:"עוֹד",t:"od",e:"still"},
+{h:"נָשָׂא",t:"nasa",e:"carried"},
+{h:"אֶת",t:"et",e:"(object marker)"},
+{h:"הַתַּרְמִיל,",t:"hatarmil",e:"the backpack"},
+{h:"אֲבָל",t:"aval",e:"but"},
+{h:"הוּא",t:"hu",e:"he"},
+{h:"הִרְגִּישׁ",t:"hirgish",e:"felt"},
+{h:"יוֹתֵר",t:"yoter",e:"more"},
+{h:"קַל.",t:"kal",e:"light"}
+],tr:"He still carried the backpack, but he felt lighter."}
+]
+},
+// ──────────────────────────────────────────────
+// STORY 4 — Folklore / Legend
+// ──────────────────────────────────────────────
+{
+  title:"שְׁלוֹשָׁה מַפְתְּחוֹת שֶׁל צְפַת",
+  titleTranslit:"Shlosha Maftekhot Shel Tsfat",
+  titleEnglish:"Three Keys of Safed",
+  genre:"Folklore / Legend",
+  icon:"🔮",
+  sentences:[
+{p:true,w:[
+{h:"לִירוֹן",t:"Liron",e:"Liron (name)"},
+{h:"הִגִּיעָה",t:"higi'a",e:"arrived"},
+{h:"לִצְפַת",t:"liTsfat",e:"to Safed"},
+{h:"בְּעֶרֶב",t:"be'erev",e:"on an evening"},
+{h:"קַר",t:"kar",e:"cold"},
+{h:"שֶׁל",t:"shel",e:"of"},
+{h:"חֹרֶף.",t:"khoref",e:"winter"}
+],tr:"Liron arrived in Safed on a cold winter evening."},
+
+{w:[
+{h:"הָעִיר",t:"ha'ir",e:"the city"},
+{h:"הָיְתָה",t:"hayta",e:"was"},
+{h:"עֲטוּפָה",t:"atufa",e:"wrapped"},
+{h:"בְּעָרְפֶל.",t:"be'arfel",e:"in fog"},
+{h:"צְפַת",t:"Tsfat",e:"Safed"},
+{h:"הִיא",t:"hi",e:"it is"},
+{h:"הָעִיר",t:"ha'ir",e:"the city"},
+{h:"הַכִּי",t:"hakhi",e:"the most"},
+{h:"גְּבוֹהָה",t:"gvoha",e:"high"},
+{h:"בְּיִשְׂרָאֵל.",t:"beYisra'el",e:"in Israel"}
+],tr:"The city was wrapped in fog. Safed is the highest city in Israel."},
+
+{w:[
+{h:"הִיא",t:"hi",e:"she"},
+{h:"נָשְׂאָה",t:"nas'a",e:"carried"},
+{h:"מִזְוָדָה",t:"mizvada",e:"a suitcase"},
+{h:"אַחַת",t:"akhat",e:"one"},
+{h:"וְאֶת",t:"ve'et",e:"and (obj.)"},
+{h:"הַמַּפְתֵּחַ",t:"hamafteakh",e:"the key"},
+{h:"לַסְּטוּדְיוֹ",t:"lastudyo",e:"to the studio"},
+{h:"הַקָּטָן",t:"hakatan",e:"the small"},
+{h:"שֶׁלָּהּ",t:"shela",e:"her"},
+{h:"בְּרוֹבַע",t:"berova",e:"in the quarter of"},
+{h:"הָאָמָּנִים.",t:"ha'amanim",e:"the artists"}
+],tr:"She carried one suitcase and the key to her small studio in the Artists' Quarter."},
+
+{p:true,w:[
+{h:"לִירוֹן",t:"Liron",e:"Liron"},
+{h:"הָיְתָה",t:"hayta",e:"was"},
+{h:"צַיֶּרֶת.",t:"tsayeret",e:"a painter"},
+{h:"הִיא",t:"hi",e:"she"},
+{h:"עָזְבָה",t:"azva",e:"left"},
+{h:"אֶת",t:"et",e:"(object marker)"},
+{h:"תֵּל",t:"Tel",e:"Tel"},
+{h:"אָבִיב",t:"Aviv",e:"Aviv"},
+{h:"אַחֲרֵי",t:"akharei",e:"after"},
+{h:"שֶׁאִמָּא",t:"she'ima",e:"that her mother"},
+{h:"שֶׁלָּהּ",t:"shela",e:"her"},
+{h:"נִפְטְרָה.",t:"niftera",e:"passed away"}
+],tr:"Liron was a painter. She left Tel Aviv after her mother passed away."},
+
+{w:[
+{h:"הִיא",t:"hi",e:"she"},
+{h:"הָלְכָה",t:"halkha",e:"walked"},
+{h:"בַּסִּמְטָאוֹת",t:"basimta'ot",e:"in the alleys"},
+{h:"הַצָּרוֹת.",t:"hatsarot",e:"the narrow"},
+{h:"דְּלָתוֹת",t:"dlatot",e:"doors"},
+{h:"כְּחוּלוֹת",t:"kkhulot",e:"blue"},
+{h:"בְּכָל",t:"bekhol",e:"on every"},
+{h:"מָקוֹם.",t:"makom",e:"place"}
+],tr:"She walked through the narrow alleys. Blue doors everywhere."},
+
+{w:[
+{h:"לְפִי",t:"lefi",e:"according to"},
+{h:"הַמָּסֹרֶת,",t:"hamasoret",e:"the tradition"},
+{h:"הַצֶּבַע",t:"hatseva",e:"the color"},
+{h:"הַכָּחוֹל",t:"hakakhol",e:"the blue"},
+{h:"מְגוֹנֵן",t:"megonen",e:"protects"},
+{h:"מֵעֵין",t:"me'ein",e:"from the eye of"},
+{h:"הָרָע.",t:"hara",e:"the evil"}
+],tr:"According to tradition, the blue color protects from the evil eye."},
+
+{p:true,w:[
+{h:"בְּחֲנוּת",t:"bekhanut",e:"in a shop of"},
+{h:"סְפָרִים",t:"sfarim",e:"books"},
+{h:"יְשָׁנָה",t:"yeshana",e:"old"},
+{h:"בְּסִמְטָה",t:"besimta",e:"in an alley"},
+{h:"צָרָה,",t:"tsara",e:"narrow"},
+{h:"הִיא",t:"hi",e:"she"},
+{h:"פָּגְשָׁה",t:"pagsha",e:"met"},
+{h:"אֶת",t:"et",e:"(object marker)"},
+{h:"רַב",t:"Rav",e:"Rabbi"},
+{h:"מְנַחֵם.",t:"Menakhem",e:"Menachem (name)"}
+],tr:"In an old bookshop in a narrow alley, she met Rabbi Menachem."},
+
+{w:[
+{h:"הוּא",t:"hu",e:"he"},
+{h:"הָיָה",t:"haya",e:"was"},
+{h:"זָקֵן",t:"zaken",e:"old"},
+{h:"עִם",t:"im",e:"with"},
+{h:"עֵינַיִם",t:"einayim",e:"eyes"},
+{h:"חַכָּמוֹת",t:"khakhamot",e:"wise"},
+{h:"וְחִיּוּךְ",t:"vekhiyukh",e:"and a smile"},
+{h:"חַם.",t:"kham",e:"warm"}
+],tr:"He was old with wise eyes and a warm smile."},
+
+{w:[
+{h:"\"צְפַת",t:"Tsfat",e:"Safed"},
+{h:"לֹא",t:"lo",e:"not"},
+{h:"נוֹתֶנֶת",t:"notenet",e:"gives"},
+{h:"אֶת",t:"et",e:"(object marker)"},
+{h:"הַסּוֹדוֹת",t:"hasodot",e:"the secrets"},
+{h:"שֶׁלָּהּ",t:"shela",e:"her"},
+{h:"לְמְבַקְּרִים,\"",t:"lemevakrim",e:"to visitors"},
+{h:"הוּא",t:"hu",e:"he"},
+{h:"אָמַר.",t:"amar",e:"said"},
+{h:"\"אַתְּ",t:"at",e:"you (f)"},
+{h:"צְרִיכָה",t:"tsrikha",e:"need"},
+{h:"לִהְיוֹת",t:"lihyot",e:"to be"},
+{h:"תּוֹשֶׁבֶת",t:"toshevet",e:"a resident of"},
+{h:"הַנְּשָׁמָה.\"",t:"haneshama",e:"the soul"}
+],tr:"\"Safed doesn't give its secrets to visitors,\" he said. \"You must become a resident of the soul.\""},
+
+{p:true,w:[
+{h:"רַב",t:"Rav",e:"Rabbi"},
+{h:"מְנַחֵם",t:"Menakhem",e:"Menachem"},
+{h:"סִפֵּר",t:"siper",e:"told"},
+{h:"לָהּ",t:"la",e:"her"},
+{h:"אֶת",t:"et",e:"(object marker)"},
+{h:"אַגָּדַת",t:"agadat",e:"the legend of"},
+{h:"שְׁלוֹשֶׁת",t:"shloshet",e:"the three"},
+{h:"הַמַּפְתְּחוֹת.",t:"hamaftekhot",e:"the keys"}
+],tr:"Rabbi Menachem told her the legend of the three keys."},
+
+{w:[
+{h:"בַּמֵּאָה",t:"bame'a",e:"in the century"},
+{h:"הַשֵּׁשׁ",t:"hashesh",e:"the sixth"},
+{h:"עֶשְׂרֵה,",t:"esre",e:"tenth"},
+{h:"כְּשֶׁהַמְקֻבָּלִים",t:"kshehamekubalim",e:"when the Kabbalists"},
+{h:"הַגְּדוֹלִים",t:"hagdolim",e:"the great"},
+{h:"חָיוּ",t:"khayu",e:"lived"},
+{h:"בִּצְפַת,",t:"biTsfat",e:"in Safed"},
+{h:"נוֹצְרוּ",t:"notsru",e:"were created"},
+{h:"שְׁלוֹשָׁה",t:"shlosha",e:"three"},
+{h:"מַפְתְּחוֹת.",t:"maftekhot",e:"keys"}
+],tr:"In the 16th century, when the great Kabbalists lived in Safed, three keys were created."},
+
+{w:[
+{h:"כָּל",t:"kol",e:"each"},
+{h:"מַפְתֵּחַ",t:"mafteakh",e:"key"},
+{h:"יִצֵּג",t:"yitseg",e:"represented"},
+{h:"חָכְמָה",t:"khokhma",e:"wisdom"},
+{h:"אַחֶרֶת:",t:"akheret",e:"different"},
+{h:"בִּינָה,",t:"bina",e:"understanding"},
+{h:"חֶסֶד,",t:"khesed",e:"kindness"},
+{h:"וֶאֱמֶת.",t:"ve'emet",e:"and truth"}
+],tr:"Each key represented a different wisdom: understanding, kindness, and truth."},
+
+{w:[
+{h:"הַמַּפְתְּחוֹת",t:"hamaftekhot",e:"the keys"},
+{h:"הֻסְתְּרוּ",t:"hustru",e:"were hidden"},
+{h:"בָּעִיר",t:"ba'ir",e:"in the city"},
+{h:"כְּדֵי",t:"kedei",e:"in order to"},
+{h:"לִשְׁמֹר",t:"lishmor",e:"to protect"},
+{h:"עַל",t:"al",e:"on"},
+{h:"הַכֹּחַ",t:"hakoakh",e:"the power"},
+{h:"הָרוּחָנִי",t:"harukhani",e:"the spiritual"},
+{h:"שֶׁלָּהּ.",t:"shela",e:"its"}
+],tr:"The keys were hidden in the city to protect its spiritual power."},
+
+{p:true,w:[
+{h:"לִירוֹן",t:"Liron",e:"Liron"},
+{h:"הִתְחִילָה",t:"hitkhila",e:"began"},
+{h:"לְצַיֵּר",t:"letsayer",e:"to paint"},
+{h:"אֶת",t:"et",e:"(object marker)"},
+{h:"הָאַגָּדָה.",t:"ha'agada",e:"the legend"},
+{h:"הָאָמָּנוּת",t:"ha'amanut",e:"the art"},
+{h:"שֶׁלָּהּ",t:"shela",e:"her"},
+{h:"חָזְרָה",t:"khazra",e:"returned"},
+{h:"לַחַיִּים.",t:"lakhayim",e:"to life"}
+],tr:"Liron began to paint the legend. Her art came back to life."},
+
+{w:[
+{h:"הִיא",t:"hi",e:"she"},
+{h:"גִּלְּתָה",t:"gilta",e:"discovered"},
+{h:"שֶׁבַּחֲנוּת",t:"shebakhanut",e:"that in the shop"},
+{h:"הַסְּפָרִים",t:"hasfarim",e:"the books"},
+{h:"יֵשׁ",t:"yesh",e:"there is"},
+{h:"מַפָּה",t:"mapa",e:"a map"},
+{h:"עַתִּיקָה",t:"atika",e:"ancient"},
+{h:"שֶׁל",t:"shel",e:"of"},
+{h:"צְפַת",t:"Tsfat",e:"Safed"},
+{h:"עִם",t:"im",e:"with"},
+{h:"שָׁלוֹשׁ",t:"shalosh",e:"three"},
+{h:"סִימָנִים.",t:"simanim",e:"markings"}
+],tr:"She discovered that the bookshop contained an ancient map of Safed with three markings."},
+
+{p:true,w:[
+{h:"לִירוֹן",t:"Liron",e:"Liron"},
+{h:"הָלְכָה",t:"halkha",e:"walked"},
+{h:"לַמִּקְוֶה",t:"lamikvе",e:"to the mikveh"},
+{h:"הַיָּשָׁן",t:"hayashan",e:"the old"},
+{h:"שֶׁמִּתַּחַת",t:"shemitakhat",e:"that is beneath"},
+{h:"לָאָרֶץ.",t:"la'arets",e:"the ground"},
+{h:"שָׁם",t:"sham",e:"there"},
+{h:"הִיא",t:"hi",e:"she"},
+{h:"מָצְאָה",t:"mats'a",e:"found"},
+{h:"אֶבֶן",t:"even",e:"a stone"},
+{h:"כְּחוּלָה",t:"kkhula",e:"blue"},
+{h:"קְטַנָּה.",t:"ktana",e:"small"}
+],tr:"Liron went to the old mikveh beneath the ground. There she found a small blue stone."},
+
+{w:[
+{h:"בְּקִיר",t:"bekir",e:"in a wall"},
+{h:"שֶׁל",t:"shel",e:"of"},
+{h:"בֵּית",t:"beit",e:"house of"},
+{h:"כְּנֶסֶת",t:"kneset",e:"gathering (synagogue)"},
+{h:"עַתִּיק,",t:"atik",e:"ancient"},
+{h:"הִיא",t:"hi",e:"she"},
+{h:"מָצְאָה",t:"mats'a",e:"found"},
+{h:"סֵמֶל",t:"semel",e:"a symbol"},
+{h:"חָקוּק:",t:"khakuk",e:"carved"},
+{h:"שָׁלוֹשׁ",t:"shalosh",e:"three"},
+{h:"אוֹתִיּוֹת",t:"otiyot",e:"letters"},
+{h:"שְׁזוּרוֹת.",t:"shzurot",e:"intertwined"}
+],tr:"In the wall of an ancient synagogue, she found a carved symbol: three intertwined letters."},
+
+{w:[
+{h:"בֵּ\"ית,",t:"beit",e:"Bet"},
+{h:"חֵ\"ית,",t:"kheit",e:"Chet"},
+{h:"אָלֶ\"ף",t:"alef",e:"Alef"},
+{h:"—",t:"—",e:"—"},
+{h:"רָאשֵׁי",t:"rashei",e:"the initials of"},
+{h:"תֵּבוֹת",t:"tevot",e:"words"},
+{h:"שֶׁל",t:"shel",e:"of"},
+{h:"בִּינָה,",t:"bina",e:"understanding"},
+{h:"חֶסֶד,",t:"khesed",e:"kindness"},
+{h:"אֱמֶת.",t:"emet",e:"truth"}
+],tr:"Bet, Chet, Alef — the initials of understanding, kindness, truth."},
+
+{p:true,w:[
+{h:"לְיַד",t:"leyad",e:"next to"},
+{h:"עֵץ",t:"ets",e:"a tree of"},
+{h:"זַיִת",t:"zayit",e:"olive"},
+{h:"עַתִּיק",t:"atik",e:"ancient"},
+{h:"עַל",t:"al",e:"on"},
+{h:"הַגִּבְעָה,",t:"hagiv'a",e:"the hill"},
+{h:"הִיא",t:"hi",e:"she"},
+{h:"יָשְׁבָה",t:"yashva",e:"sat"},
+{h:"וְהִסְתַּכְּלָה",t:"vehistakla",e:"and looked"},
+{h:"עַל",t:"al",e:"at"},
+{h:"הַכִּנֶּרֶת.",t:"haKineret",e:"the Sea of Galilee"}
+],tr:"Next to an ancient olive tree on the hill, she sat and looked at the Sea of Galilee."},
+
+{w:[
+{h:"הַשֶּׁמֶשׁ",t:"hashemesh",e:"the sun"},
+{h:"שָׁקְעָה.",t:"shak'a",e:"set"},
+{h:"הַמַּיִם",t:"hamayim",e:"the water"},
+{h:"הָיוּ",t:"hayu",e:"were"},
+{h:"זְהוּבִים.",t:"zhuvim",e:"golden"},
+{h:"הִיא",t:"hi",e:"she"},
+{h:"חָשְׁבָה",t:"khashva",e:"thought"},
+{h:"עַל",t:"al",e:"about"},
+{h:"אִמָּא",t:"ima",e:"mom"},
+{h:"שֶׁלָּהּ",t:"shela",e:"her"},
+{h:"שֶׁאָהֲבָה",t:"she'ahava",e:"who loved"},
+{h:"עֲצֵי",t:"atsei",e:"trees of"},
+{h:"זַיִת.",t:"zayit",e:"olive"}
+],tr:"The sun set. The water was golden. She thought about her mother who loved olive trees."},
+
+{w:[
+{h:"הִיא",t:"hi",e:"she"},
+{h:"בָּכְתָה",t:"bakhta",e:"cried"},
+{h:"בִּפְעַם",t:"bif'am",e:"for the time"},
+{h:"הָרִאשׁוֹנָה",t:"harishona",e:"the first"},
+{h:"מֵאָז",t:"me'az",e:"since"},
+{h:"הַהַלְוָיָה.",t:"hahalvaya",e:"the funeral"}
+],tr:"She cried for the first time since the funeral."},
+
+{p:true,w:[
+{h:"רַב",t:"Rav",e:"Rabbi"},
+{h:"מְנַחֵם",t:"Menakhem",e:"Menachem"},
+{h:"הִסְבִּיר",t:"hisbir",e:"explained"},
+{h:"לָהּ:",t:"la",e:"to her"},
+{h:"\"הַמַּפְתְּחוֹת",t:"hamaftekhot",e:"the keys"},
+{h:"הֵם",t:"hem",e:"they are"},
+{h:"לֹא",t:"lo",e:"not"},
+{h:"מִמַּתֶּכֶת.",t:"mimatekhet",e:"of metal"},
+{h:"הֵם",t:"hem",e:"they are"},
+{h:"פְּנִימִיִּים.\"",t:"pnimi'im",e:"internal"}
+],tr:"Rabbi Menachem explained: \"The keys are not made of metal. They are internal.\""},
+
+{w:[
+{h:"\"בִּינָה",t:"bina",e:"understanding"},
+{h:"הִיא",t:"hi",e:"is"},
+{h:"לְהָבִין",t:"lehavin",e:"to understand"},
+{h:"אֶת",t:"et",e:"(object marker)"},
+{h:"הַצַּעַר.",t:"hatsa'ar",e:"the grief"},
+{h:"חֶסֶד",t:"khesed",e:"kindness"},
+{h:"הוּא",t:"hu",e:"is"},
+{h:"לִהְיוֹת",t:"lihyot",e:"to be"},
+{h:"טוֹב",t:"tov",e:"good"},
+{h:"לְעַצְמְךָ.",t:"le'atsmekha",e:"to yourself"},
+{h:"אֱמֶת",t:"emet",e:"truth"},
+{h:"הִיא",t:"hi",e:"is"},
+{h:"לָדַעַת",t:"lada'at",e:"to know"},
+{h:"שֶׁהָאֹבְדָן",t:"sheha'ovdan",e:"that the loss"},
+{h:"הוּא",t:"hu",e:"is"},
+{h:"חֵלֶק",t:"khelek",e:"a part"},
+{h:"מֵהַחַיִּים.\"",t:"mehakhayim",e:"of life"}
+],tr:"\"Understanding is to understand the grief. Kindness is to be good to yourself. Truth is to know that loss is part of life.\""},
+
+{p:true,w:[
+{h:"לִירוֹן",t:"Liron",e:"Liron"},
+{h:"צִיְּרָה",t:"tsiyra",e:"painted"},
+{h:"שָׁלוֹשׁ",t:"shalosh",e:"three"},
+{h:"תְּמוּנוֹת:",t:"tmunot",e:"paintings"},
+{h:"אַחַת",t:"akhat",e:"one"},
+{h:"לְכָל",t:"lekhol",e:"for each"},
+{h:"מַפְתֵּחַ.",t:"mafteakh",e:"key"}
+],tr:"Liron painted three paintings: one for each key."},
+
+{w:[
+{h:"בְּכָל",t:"bekhol",e:"in each"},
+{h:"תְּמוּנָה",t:"tmuna",e:"painting"},
+{h:"הָיוּ",t:"hayu",e:"there were"},
+{h:"הַנּוֹף",t:"hanof",e:"the landscape"},
+{h:"שֶׁל",t:"shel",e:"of"},
+{h:"צְפַת,",t:"Tsfat",e:"Safed"},
+{h:"הָאַגָּדָה",t:"ha'agada",e:"the legend"},
+{h:"הָעַתִּיקָה,",t:"ha'atika",e:"the ancient"},
+{h:"וּפָנֶיהָ",t:"ufaneha",e:"and the face"},
+{h:"שֶׁל",t:"shel",e:"of"},
+{h:"אִמָּא",t:"ima",e:"mom"},
+{h:"שֶׁלָּהּ.",t:"shela",e:"her"}
+],tr:"In each painting were the landscape of Safed, the ancient legend, and her mother's face."},
+
+{w:[
+{h:"הַתְּמוּנוֹת",t:"hatmunot",e:"the paintings"},
+{h:"הוּצְגוּ",t:"hutsgu",e:"were displayed"},
+{h:"בְּגַלֶּרְיָה",t:"begalerya",e:"in a gallery"},
+{h:"בִּצְפַת.",t:"biTsfat",e:"in Safed"},
+{h:"אֲנָשִׁים",t:"anashim",e:"people"},
+{h:"בָּאוּ",t:"ba'u",e:"came"},
+{h:"וְהִתְרַגְּשׁוּ.",t:"vehitrag'shu",e:"and were moved"}
+],tr:"The paintings were displayed in a gallery in Safed. People came and were moved."},
+
+{p:true,w:[
+{h:"בְּעֶרֶב",t:"be'erev",e:"on the evening of"},
+{h:"שַׁבָּת,",t:"Shabat",e:"Shabbat"},
+{h:"לִירוֹן",t:"Liron",e:"Liron"},
+{h:"הָלְכָה",t:"halkha",e:"walked"},
+{h:"בַּסִּמְטָה.",t:"basimta",e:"in the alley"},
+{h:"נֵרוֹת",t:"nerot",e:"candles"},
+{h:"שַׁבָּת",t:"Shabat",e:"of Shabbat"},
+{h:"הָאִירוּ",t:"he'iru",e:"lit up"},
+{h:"בַּחַלּוֹנוֹת.",t:"bakhalonot",e:"in the windows"}
+],tr:"On Shabbat evening, Liron walked in the alley. Shabbat candles lit up the windows."},
+
+{w:[
+{h:"שִׁירָה",t:"shira",e:"song"},
+{h:"עָלְתָה",t:"alta",e:"rose"},
+{h:"מִבָּתֵּי",t:"mibatei",e:"from the houses of"},
+{h:"הַכְּנֶסֶת",t:"hakneset",e:"the gathering (synagogues)"},
+{h:"—",t:"—",e:"—"},
+{h:"\"לְכָה",t:"lekha",e:"go"},
+{h:"דוֹדִי\",",t:"dodi",e:"my beloved"},
+{h:"הַשִּׁיר",t:"hashir",e:"the song"},
+{h:"שֶׁנִּכְתַּב",t:"shenikhtav",e:"that was written"},
+{h:"כָּאן",t:"kan",e:"here"},
+{h:"בִּצְפַת",t:"biTsfat",e:"in Safed"},
+{h:"לִפְנֵי",t:"lifnei",e:"before"},
+{h:"חֲמֵשׁ",t:"khamesh",e:"five"},
+{h:"מֵאוֹת",t:"me'ot",e:"hundred"},
+{h:"שָׁנָה.",t:"shana",e:"years"}
+],tr:"Song rose from the synagogues — \"Lekha Dodi\", the hymn written here in Safed five hundred years ago."},
+
+{w:[
+{h:"הֶעָבָר",t:"he'avar",e:"the past"},
+{h:"וְהַהֹוֶה",t:"vehahove",e:"and the present"},
+{h:"הָיוּ",t:"hayu",e:"were"},
+{h:"דָּבָר",t:"davar",e:"thing"},
+{h:"אֶחָד.",t:"ekhad",e:"one"},
+{h:"לִירוֹן",t:"Liron",e:"Liron"},
+{h:"מָצְאָה",t:"mats'a",e:"found"},
+{h:"אֶת",t:"et",e:"(object marker)"},
+{h:"הַמַּפְתְּחוֹת",t:"hamaftekhot",e:"the keys"},
+{h:"שֶׁלָּהּ.",t:"shela",e:"her"}
+],tr:"Past and present were one. Liron found her keys."}
+]
+},
+// ──────────────────────────────────────────────
+// STORY 5 — Sci-Fi / Fantasy
+// ──────────────────────────────────────────────
+{
+  title:"עִיר הַחוֹל",
+  titleTranslit:"Ir HaKhol",
+  titleEnglish:"City of Sand",
+  genre:"Sci-Fi / Fantasy",
+  icon:"🚀",
+  sentences:[
+{p:true,w:[
+{h:"שְׁנַת",t:"shnat",e:"the year"},
+{h:"2060.",t:"alpayim veshishim",e:"2060"},
+{h:"בְּאֵר",t:"Be'er",e:"Be'er"},
+{h:"שֶׁבַע",t:"Sheva",e:"Sheva"},
+{h:"הֶחָדָשָׁה",t:"hakhadasha",e:"the new"},
+{h:"נוֹצְצָה",t:"notstsa",e:"sparkled"},
+{h:"בַּשֶּׁמֶשׁ.",t:"bashemesh",e:"in the sun"}
+],tr:"The year 2060. New Be'er Sheva sparkled in the sun."},
+
+{w:[
+{h:"הָעִיר",t:"ha'ir",e:"the city"},
+{h:"הָיְתָה",t:"hayta",e:"was"},
+{h:"מְלֵאָה",t:"mele'a",e:"full of"},
+{h:"פָּנֶלִים",t:"panelim",e:"panels"},
+{h:"סוֹלָרִיִּים",t:"solari'im",e:"solar"},
+{h:"וְגִנּוֹת",t:"veginot",e:"and gardens"},
+{h:"אֲנָכִיּוֹת.",t:"anakhiyot",e:"vertical"}
+],tr:"The city was full of solar panels and vertical gardens."},
+
+{w:[
+{h:"אוֹרִי",t:"Ori",e:"Ori (name)"},
+{h:"כֹּהֵן",t:"Kohen",e:"Cohen (name)"},
+{h:"הָלַךְ",t:"halakh",e:"walked"},
+{h:"לַעֲבוֹדָה.",t:"la'avoda",e:"to work"},
+{h:"הוּא",t:"hu",e:"he"},
+{h:"הָיָה",t:"haya",e:"was"},
+{h:"מְהַנְדֵּס",t:"mehandеs",e:"an engineer"},
+{h:"תּוֹכְנָה",t:"tokhna",e:"software"},
+{h:"בְּחֶבְרַת",t:"bekhevrat",e:"at a company of"},
+{h:"אֶנֶרְגְּיָה.",t:"energya",e:"energy"}
+],tr:"Ori Cohen walked to work. He was a software engineer at an energy company."},
+
+{p:true,w:[
+{h:"בַּעֲבוֹדָה,",t:"ba'avoda",e:"at work"},
+{h:"הַחַיְשָׁנִים",t:"khayshanim",e:"the sensors"},
+{h:"הֶרְאוּ",t:"her'u",e:"showed"},
+{h:"מַשֶּׁהוּ",t:"mashehu",e:"something"},
+{h:"מוּזָר.",t:"muzar",e:"strange"},
+{h:"רְעִידוֹת",t:"re'idot",e:"vibrations"},
+{h:"קְצוּבוֹת",t:"ktsuvot",e:"rhythmic"},
+{h:"מֵעֹמֶק",t:"me'omek",e:"from the depth of"},
+{h:"הָאָרֶץ.",t:"ha'arets",e:"the earth"}
+],tr:"At work, the sensors showed something strange. Rhythmic vibrations from deep in the earth."},
+
+{w:[
+{h:"הָרְעִידוֹת",t:"hare'idot",e:"the vibrations"},
+{h:"הָיוּ",t:"hayu",e:"were"},
+{h:"סְדִירוֹת",t:"sdirot",e:"regular"},
+{h:"מִדַּי",t:"midai",e:"too much"},
+{h:"כְּדֵי",t:"kedei",e:"to"},
+{h:"לִהְיוֹת",t:"lihyot",e:"be"},
+{h:"גֵּאוֹלוֹגִיּוֹת.",t:"ge'ologiyot",e:"geological"}
+],tr:"The vibrations were too regular to be geological."},
+
+{w:[
+{h:"הַמְּנַהֵל",t:"hamenahel",e:"the manager"},
+{h:"שֶׁלּוֹ",t:"shelo",e:"his"},
+{h:"אָמַר:",t:"amar",e:"said"},
+{h:"\"אֵין",t:"ein",e:"there is no"},
+{h:"מַצָּב.",t:"matsav",e:"way"},
+{h:"הַחַיְשָׁנִים",t:"hakhayshanim",e:"the sensors"},
+{h:"פָּשׁוּט",t:"pashut",e:"simply"},
+{h:"לֹא",t:"lo",e:"not"},
+{h:"עוֹבְדִים",t:"ovdim",e:"working"},
+{h:"נָכוֹן.\"",t:"nakhon",e:"correctly"}
+],tr:"His manager said: \"No way. The sensors are simply malfunctioning.\""},
+
+{p:true,w:[
+{h:"אוֹרִי",t:"Ori",e:"Ori"},
+{h:"פָּנָה",t:"pana",e:"turned to"},
+{h:"לַפְּרוֹפֶסוֹר",t:"laprofesor",e:"to Professor"},
+{h:"יָעֵל",t:"Ya'el",e:"Yael (name)"},
+{h:"אוֹר-חַיִּים,",t:"Or-Khayim",e:"Or-Khayim (name)"},
+{h:"פִיזִיקָאִית",t:"fizika'it",e:"a physicist"},
+{h:"מִמַּכוֹן",t:"mimakhon",e:"from the institute of"},
+{h:"וַיְצְמַן.",t:"Vaitsman",e:"Weizmann"}
+],tr:"Ori turned to Professor Yael Or-Khayim, a physicist from the Weizmann Institute."},
+
+{w:[
+{h:"הִיא",t:"hi",e:"she"},
+{h:"הִכִּירָה",t:"hikira",e:"recognized"},
+{h:"אֶת",t:"et",e:"(object marker)"},
+{h:"הַתַּבְנִית.",t:"hatavnit",e:"the pattern"},
+{h:"הִיא",t:"hi",e:"she"},
+{h:"רָאֲתָה",t:"ra'ata",e:"saw"},
+{h:"קְרִיאוֹת",t:"kri'ot",e:"readings"},
+{h:"דּוֹמוֹת",t:"domot",e:"similar"},
+{h:"לְיַד",t:"leyad",e:"near"},
+{h:"הָעִיר",t:"ha'ir",e:"the city"},
+{h:"הָעַתִּיקָה",t:"ha'atika",e:"the ancient"},
+{h:"עַבְדַּת.",t:"Avdat",e:"Avdat"}
+],tr:"She recognized the pattern. She had seen similar readings near the ancient city of Avdat."},
+
+{w:[
+{h:"יָעֵל",t:"Ya'el",e:"Yael"},
+{h:"הִכִּירָה",t:"hikira",e:"introduced"},
+{h:"לְאוֹרִי",t:"le'Ori",e:"to Ori"},
+{h:"אֶת",t:"et",e:"(object marker)"},
+{h:"שִׁירָה",t:"Shira",e:"Shira (name)"},
+{h:"בִּיטוֹן,",t:"Biton",e:"Biton (name)"},
+{h:"אַרְכֵּאוֹלוֹגִית",t:"arke'ologit",e:"an archaeologist"},
+{h:"שֶׁחָפְרָה",t:"shekhafra",e:"who dug"},
+{h:"בְּעַבְדַּת.",t:"be'Avdat",e:"at Avdat"}
+],tr:"Yael introduced Ori to Shira Biton, an archaeologist who was excavating at Avdat."},
+
+{p:true,w:[
+{h:"שִׁירָה",t:"Shira",e:"Shira"},
+{h:"מָצְאָה",t:"mats'a",e:"found"},
+{h:"חֶדֶר",t:"kheder",e:"a room"},
+{h:"תַּת-קַרְקָעִי",t:"tat-karka'i",e:"underground"},
+{h:"עִם",t:"im",e:"with"},
+{h:"כְּתוֹבוֹת",t:"ktovot",e:"inscriptions"},
+{h:"בִּכְתָב",t:"bikhtav",e:"in writing"},
+{h:"לֹא",t:"lo",e:"not"},
+{h:"מוּכָּר.",t:"mukar",e:"known"}
+],tr:"Shira had found an underground room with inscriptions in an unknown script."},
+
+{w:[
+{h:"הַכְּתוֹבוֹת",t:"haktvot",e:"the inscriptions"},
+{h:"תֵּאֲרוּ",t:"te'aru",e:"described"},
+{h:"שׁוֹמֵר",t:"shomer",e:"a guardian"},
+{h:"—",t:"—",e:"—"},
+{h:"יְצוּר",t:"yetsur",e:"a creature"},
+{h:"עָשׂוּי",t:"asui",e:"made"},
+{h:"מֵחוֹל,",t:"mekhol",e:"of sand"},
+{h:"אֶבֶן",t:"even",e:"stone"},
+{h:"וְאֵשׁ.",t:"ve'esh",e:"and fire"}
+],tr:"The inscriptions described a guardian — a creature made of sand, stone and fire."},
+
+{w:[
+{h:"גּוֹלֵם",t:"golem",e:"a golem"},
+{h:"שֶׁל",t:"shel",e:"of"},
+{h:"הַמִּדְבָּר,",t:"hamidbar",e:"the desert"},
+{h:"שֶׁנּוֹצַר",t:"shenotsar",e:"that was created"},
+{h:"לִשְׁמֹר",t:"lishmor",e:"to guard"},
+{h:"עַל",t:"al",e:"on"},
+{h:"הָאָרֶץ.",t:"ha'arets",e:"the land"}
+],tr:"A golem of the desert, created to guard the land."},
+
+{p:true,w:[
+{h:"הָרְעִידוֹת",t:"hare'idot",e:"the vibrations"},
+{h:"הִתְחַזְּקוּ.",t:"hitkhazkhu",e:"intensified"},
+{h:"בָּעִיר",t:"ba'ir",e:"in the city"},
+{h:"הִתְחִילוּ",t:"hitkhilu",e:"began"},
+{h:"דְּבָרִים",t:"dvarim",e:"things"},
+{h:"מוּזָרִים:",t:"muzarim",e:"strange"},
+{h:"חוֹל",t:"khol",e:"sand"},
+{h:"פָּרַץ",t:"parats",e:"burst"},
+{h:"מִסְּדָקִים",t:"misdakim",e:"from cracks"},
+{h:"בַּכְּבִישִׁים.",t:"bakvishim",e:"in the roads"}
+],tr:"The vibrations intensified. In the city, strange things began: sand burst from cracks in the roads."},
+
+{w:[
+{h:"הַפְּרוֹפֶסוֹר",t:"haprofesor",e:"the professor"},
+{h:"יָעֵל",t:"Ya'el",e:"Yael"},
+{h:"הֵבִינָה:",t:"hevina",e:"understood"},
+{h:"הָרְעִידוֹת",t:"hare'idot",e:"the vibrations"},
+{h:"עוֹקְבוֹת",t:"okvot",e:"follow"},
+{h:"אַחֲרֵי",t:"akharei",e:"after"},
+{h:"תַּבְנִית",t:"tavnit",e:"a pattern"},
+{h:"מָתֵמָטִית",t:"matеmatit",e:"mathematical"},
+{h:"שֶׁל",t:"shel",e:"of"},
+{h:"גִּימַטְרִיָּה",t:"gimatriya",e:"gematria"},
+{h:"עַתִּיקָה.",t:"atika",e:"ancient"}
+],tr:"Professor Yael understood: the vibrations follow a mathematical pattern of ancient gematria."},
+
+{w:[
+{h:"הַגּוֹלֵם",t:"hagolem",e:"the golem"},
+{h:"מְנַסֶּה",t:"menase",e:"is trying"},
+{h:"לְתַקְשֵׁר.",t:"letaksher",e:"to communicate"},
+{h:"הַמֶּסֶר",t:"hameser",e:"the message"},
+{h:"הָיָה",t:"haya",e:"was"},
+{h:"פָּשׁוּט:",t:"pashut",e:"simple"},
+{h:"\"תִּפְסִיקוּ",t:"tifsiku",e:"stop"},
+{h:"לַחְפֹּר.\"",t:"lakhpor",e:"digging"}
+],tr:"The golem is trying to communicate. The message was simple: \"Stop digging.\""},
+
+{p:true,w:[
+{h:"הַמֶּמְשָׁלָה",t:"hamemshhala",e:"the government"},
+{h:"לֹא",t:"lo",e:"not"},
+{h:"הִקְשִׁיבָה.",t:"hikshiva",e:"listened"},
+{h:"שַׂר",t:"sar",e:"the minister of"},
+{h:"הָאֶנֶרְגְּיָה",t:"ha'energya",e:"the energy"},
+{h:"אָמַר:",t:"amar",e:"said"},
+{h:"\"אִי",t:"i",e:"not"},
+{h:"אֶפְשָׁר",t:"efshar",e:"possible"},
+{h:"לִסְגֹּר",t:"lisgor",e:"to close"},
+{h:"אֶת",t:"et",e:"(object marker)"},
+{h:"הָאֶנֶרְגְּיָה",t:"ha'energya",e:"the energy"},
+{h:"בִּגְלַל",t:"biglal",e:"because of"},
+{h:"סִפּוּר",t:"sipur",e:"a story"},
+{h:"עַל",t:"al",e:"about"},
+{h:"רוּחוֹת.\"",t:"rukhot",e:"ghosts"}
+],tr:"The government didn't listen. The Energy Minister said: \"We can't shut down energy because of a ghost story.\""},
+
+{w:[
+{h:"אֲבָל",t:"aval",e:"but"},
+{h:"הַגּוֹלֵם",t:"hagolem",e:"the golem"},
+{h:"הִתְעוֹרֵר.",t:"hit'orer",e:"awoke"},
+{h:"הַמַּכְתֵּשׁ",t:"hamakhtesh",e:"the crater"},
+{h:"בְּמִצְפֵּה",t:"beMitspe",e:"in Mitzpe"},
+{h:"רָמוֹן",t:"Ramon",e:"Ramon"},
+{h:"הִתְחִיל",t:"hitkhil",e:"began"},
+{h:"לָזוּז.",t:"lazuz",e:"to move"}
+],tr:"But the golem awoke. The crater at Mitzpe Ramon began to shift."},
+
+{w:[
+{h:"דִּיּוּנוֹת",t:"diyunot",e:"sand dunes"},
+{h:"שֶׁל",t:"shel",e:"of"},
+{h:"חוֹל",t:"khol",e:"sand"},
+{h:"נָעוּ",t:"na'u",e:"moved"},
+{h:"לְכִיוּוּן",t:"lekhivun",e:"in the direction of"},
+{h:"הָעִיר",t:"ha'ir",e:"the city"},
+{h:"כְּמוֹ",t:"kmo",e:"like"},
+{h:"גַּלִּים.",t:"galim",e:"waves"}
+],tr:"Sand dunes moved toward the city like waves."},
+
+{p:true,w:[
+{h:"אוֹרִי,",t:"Ori",e:"Ori"},
+{h:"שִׁירָה",t:"Shira",e:"Shira"},
+{h:"וְיָעֵל",t:"veYa'el",e:"and Yael"},
+{h:"חָזְרוּ",t:"khazru",e:"returned"},
+{h:"לַחֶדֶר",t:"lakheder",e:"to the room"},
+{h:"הַתַּת-קַרְקָעִי.",t:"hatat-karka'i",e:"the underground"}
+],tr:"Ori, Shira and Yael returned to the underground room."},
+
+{w:[
+{h:"שִׁירָה",t:"Shira",e:"Shira"},
+{h:"קָרְאָה",t:"kar'a",e:"read"},
+{h:"אֶת",t:"et",e:"(object marker)"},
+{h:"הַכְּתוֹבוֹת",t:"haktvot",e:"the inscriptions"},
+{h:"בְּקוֹל",t:"bekol",e:"in a voice"},
+{h:"רָם.",t:"ram",e:"loud"},
+{h:"עִבְרִית",t:"ivrit",e:"Hebrew"},
+{h:"עַתִּיקָה",t:"atika",e:"ancient"},
+{h:"שֶׁנִּשְׁמְעָה",t:"shenishme'a",e:"that sounded"},
+{h:"כְּמוֹ",t:"kmo",e:"like"},
+{h:"תְּפִלָּה.",t:"tfila",e:"a prayer"}
+],tr:"Shira read the inscriptions aloud. Ancient Hebrew that sounded like a prayer."},
+
+{w:[
+{h:"הַגּוֹלֵם",t:"hagolem",e:"the golem"},
+{h:"הֵגִיב.",t:"hegiv",e:"responded"},
+{h:"הַחֶדֶר",t:"hakheder",e:"the room"},
+{h:"הִתְמַלֵּא",t:"hitmale",e:"filled"},
+{h:"בְּאוֹר",t:"be'or",e:"with light"},
+{h:"חַם",t:"kham",e:"warm"},
+{h:"וְזָהוּב,",t:"vezahuv",e:"and golden"},
+{h:"כְּמוֹ",t:"kmo",e:"like"},
+{h:"זְרִיחָה",t:"zrikha",e:"a sunrise"},
+{h:"בַּמִּדְבָּר.",t:"bamidbar",e:"in the desert"}
+],tr:"The golem responded. The room filled with warm, golden light, like a desert sunrise."},
+
+{p:true,w:[
+{h:"הֵם",t:"hem",e:"they"},
+{h:"הֵבִינוּ:",t:"hevinu",e:"understood"},
+{h:"הַגּוֹלֵם",t:"hagolem",e:"the golem"},
+{h:"לֹא",t:"lo",e:"not"},
+{h:"כּוֹעֵס.",t:"ko'es",e:"angry"},
+{h:"הוּא",t:"hu",e:"it"},
+{h:"כּוֹאֵב.",t:"ko'ev",e:"is in pain"}
+],tr:"They understood: the golem is not angry. It is in pain."},
+
+{w:[
+{h:"הַקְּדִיחוֹת",t:"hakdkhiot",e:"the drilling"},
+{h:"פָּגְעוּ",t:"pag'u",e:"harmed"},
+{h:"בְּמַשֶּׁהוּ",t:"bemashehu",e:"something"},
+{h:"חִיּוּנִי",t:"khiyuni",e:"vital"},
+{h:"שֶׁמְּחַבֵּר",t:"shemekhaber",e:"that connects"},
+{h:"אֶת",t:"et",e:"(object marker)"},
+{h:"הַמַּעֲרָכוֹת",t:"hama'arakhot",e:"the systems"},
+{h:"שֶׁל",t:"shel",e:"of"},
+{h:"הַמִּדְבָּר.",t:"hamidbar",e:"the desert"}
+],tr:"The drilling had harmed something vital that connects the desert's ecosystems."},
+
+{w:[
+{h:"הַגּוֹלֵם",t:"hagolem",e:"the golem"},
+{h:"הוּא",t:"hu",e:"is"},
+{h:"מַעֲרֶכֶת",t:"ma'arekhet",e:"the system of"},
+{h:"הַחִסּוּן",t:"hakhisun",e:"the immune"},
+{h:"שֶׁל",t:"shel",e:"of"},
+{h:"הַמִּדְבָּר.",t:"hamidbar",e:"the desert"}
+],tr:"The golem is the desert's immune system."},
+
+{p:true,w:[
+{h:"אוֹרִי",t:"Ori",e:"Ori"},
+{h:"תִּכְנֵן",t:"tikhnen",e:"designed"},
+{h:"מַעֲרֶכֶת",t:"ma'arekhet",e:"a system"},
+{h:"אֶנֶרְגְּיָה",t:"energya",e:"of energy"},
+{h:"חֲדָשָׁה",t:"khadasha",e:"new"},
+{h:"שֶׁעוֹבֶדֶת",t:"she'ovedet",e:"that works"},
+{h:"עִם",t:"im",e:"with"},
+{h:"הַמִּדְבָּר",t:"hamidbar",e:"the desert"},
+{h:"וְלֹא",t:"velo",e:"and not"},
+{h:"נֶגְדּוֹ.",t:"negdo",e:"against it"}
+],tr:"Ori designed a new energy system that works with the desert and not against it."},
+
+{w:[
+{h:"הַגּוֹלֵם",t:"hagolem",e:"the golem"},
+{h:"שָׁקַט.",t:"shakat",e:"calmed"},
+{h:"הַמִּדְבָּר",t:"hamidbar",e:"the desert"},
+{h:"חָזַר",t:"khazar",e:"returned"},
+{h:"לִשְׁקֵט.",t:"lishket",e:"to quiet"}
+],tr:"The golem calmed. The desert returned to stillness."},
+
+{w:[
+{h:"בַּמָּקוֹם",t:"bamakom",e:"in the place of"},
+{h:"הַחֲפִירָה",t:"hakhafira",e:"the excavation"},
+{h:"נִשְׁאְרָה",t:"nish'ara",e:"remained"},
+{h:"דְּמוּת",t:"dmut",e:"a figure of"},
+{h:"אֶבֶן:",t:"even",e:"stone"},
+{h:"יָד",t:"yad",e:"a hand"},
+{h:"שֶׁעוֹלָה",t:"she'ola",e:"that rises"},
+{h:"מֵהָאָרֶץ,",t:"meha'arets",e:"from the earth"},
+{h:"אֶצְבָּעוֹת",t:"etsba'ot",e:"fingers"},
+{h:"פְּרוּשׂוֹת",t:"prusot",e:"spread"},
+{h:"כְּמוֹ",t:"kmo",e:"like"},
+{h:"חַמְסָה.",t:"khamsa",e:"a hamsa"}
+],tr:"At the excavation site, a stone figure remained: a hand rising from the earth, fingers spread like a hamsa."},
+
+{p:true,w:[
+{h:"אוֹרִי",t:"Ori",e:"Ori"},
+{h:"עָמַד",t:"amad",e:"stood"},
+{h:"עַל",t:"al",e:"on"},
+{h:"שְׂפַת",t:"sfat",e:"the edge of"},
+{h:"הַמַּכְתֵּשׁ",t:"hamakhtesh",e:"the crater"},
+{h:"בִּשְׁקִיעָה.",t:"bishki'a",e:"at sunset"},
+{h:"הַחוֹל",t:"hakhol",e:"the sand"},
+{h:"הָיָה",t:"haya",e:"was"},
+{h:"שָׁקֵט.",t:"shaket",e:"quiet"}
+],tr:"Ori stood at the edge of the crater at sunset. The sand was quiet."},
+
+{w:[
+{h:"\"גַּם",t:"gam",e:"also"},
+{h:"זוּ",t:"zu",e:"this"},
+{h:"לְטוֹבָה,\"",t:"letova",e:"for the good"},
+{h:"הוּא",t:"hu",e:"he"},
+{h:"לָחַשׁ.",t:"lakhash",e:"whispered"},
+{h:"הַמִּדְבָּר",t:"hamidbar",e:"the desert"},
+{h:"שָׁמַר",t:"shamar",e:"guarded"},
+{h:"עַל",t:"al",e:"on"},
+{h:"הַסּוֹדוֹת",t:"hasodot",e:"the secrets"},
+{h:"שֶׁלּוֹ,",t:"shelo",e:"its"},
+{h:"כְּמוֹ",t:"kmo",e:"like"},
+{h:"תָּמִיד.",t:"tamid",e:"always"}
+],tr:"\"This too is for the good,\" he whispered. The desert guarded its secrets, as always."}
+]
+}
+];
+
+// ============================================================
+// APP STATE
+// ============================================================
+let readingMode = false;
+let allTransVisible = false;
+let darkMode = localStorage.getItem('hread-dark') === 'true';
+let fontSize = parseInt(localStorage.getItem('hread-fs')) || 28;
+let currentStory = -1;
+
+// ============================================================
+// INIT
+// ============================================================
+if (darkMode) {
+  document.body.setAttribute('data-theme', 'dark');
+  document.getElementById('darkModeBtn').classList.add('active');
+}
+document.documentElement.style.setProperty('--hebrew-size', fontSize + 'px');
+
+function renderStoryList() {
+  const el = document.getElementById('storyList');
+  el.style.display = 'block';
+  el.innerHTML = '<h2>Choose a Story</h2>' +
+    STORIES.map((s, i) =>
+      '<div class="story-card" onclick="openStory(' + i + ')">' +
+        '<div class="genre">' + s.icon + ' ' + s.genre + '</div>' +
+        '<div class="title-he">' + s.title + '</div>' +
+        '<div class="title-en">' + s.titleEnglish + '</div>' +
+        '<div class="meta">' + s.sentences.length + ' sentences &middot; ' + s.titleTranslit + '</div>' +
+      '</div>'
+    ).join('');
+}
+
+function openStory(index) {
+  currentStory = index;
+  allTransVisible = false;
+  document.getElementById('showAllBtn').style.display = 'inline-block';
+  document.getElementById('showAllBtn').textContent = 'Show All EN';
+  document.getElementById('showAllBtn').classList.remove('active');
+  document.getElementById('storyList').style.display = 'none';
+  var view = document.getElementById('storyView');
+  view.classList.add('active');
+  document.getElementById('progressBar').style.display = 'block';
+
+  var story = STORIES[index];
+  var content = document.getElementById('storyContent');
+  var html = '<div class="story-header-section">' +
+    '<div class="genre">' + story.icon + ' ' + story.genre + '</div>' +
+    '<div class="title-he">' + story.title + '</div>' +
+    '<div class="title-en">' + story.titleEnglish + '</div></div>';
+
+  for (var si = 0; si < story.sentences.length; si++) {
+    var sent = story.sentences[si];
+    var pClass = sent.p ? ' p-start' : '';
+    var wordsHtml = '';
+    for (var wi = 0; wi < sent.w.length; wi++) {
+      var word = sent.w[wi];
+      wordsHtml += '<span class="word" data-t="' + esc(word.t) + '" data-e="' + esc(word.e) + '">' + word.h + '</span> ';
+    }
+    html += '<div class="sentence-block' + pClass + '">' +
+      '<div class="sentence-text">' + wordsHtml +
+        '<span class="sentence-toggle" data-si="' + si + '">EN</span>' +
+      '</div>' +
+      '<div class="sentence-translation" id="trans-' + si + '">' + esc(sent.tr) + '</div></div>';
+  }
+  content.innerHTML = html;
+  window.scrollTo(0, 0);
+  updateProgress();
+}
+
+function esc(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function showStoryList() {
+  document.getElementById('storyView').classList.remove('active');
+  document.getElementById('progressBar').style.display = 'none';
+  document.getElementById('showAllBtn').style.display = 'none';
+  currentStory = -1;
+  hidePopup();
+  renderStoryList();
+}
+
+// ============================================================
+// WORD POPUP
+// ============================================================
+function showPopup(wordEl) {
+  if (readingMode) return;
+  var popup = document.getElementById('wordPopup');
+  document.getElementById('popupTranslit').textContent = wordEl.dataset.t;
+  document.getElementById('popupMeaning').textContent = wordEl.dataset.e;
+  popup.classList.remove('below');
+  popup.classList.add('visible');
+
+  var wr = wordEl.getBoundingClientRect();
+  var pr = popup.getBoundingClientRect();
+  var left = wr.left + wr.width / 2 - pr.width / 2;
+  var top = wr.top - pr.height - 10;
+
+  if (left < 6) left = 6;
+  if (left + pr.width > window.innerWidth - 6) left = window.innerWidth - pr.width - 6;
+  if (top < 6) {
+    top = wr.bottom + 8;
+    popup.classList.add('below');
+  }
+  popup.style.left = left + 'px';
+  popup.style.top = top + 'px';
+}
+
+function hidePopup() {
+  document.getElementById('wordPopup').classList.remove('visible');
+}
+
+// ============================================================
+// EVENT DELEGATION
+// ============================================================
+document.addEventListener('click', function(e) {
+  var word = e.target.closest('.word');
+  if (word) { e.stopPropagation(); showPopup(word); return; }
+
+  var tog = e.target.closest('.sentence-toggle');
+  if (tog) {
+    var si = tog.dataset.si;
+    var tr = document.getElementById('trans-' + si);
+    tr.classList.toggle('visible');
+    tog.classList.toggle('open');
+    return;
+  }
+  hidePopup();
+});
+
+// ============================================================
+// TOGGLES
+// ============================================================
+function toggleReadingMode() {
+  readingMode = !readingMode;
+  document.body.classList.toggle('reading-mode', readingMode);
+  document.getElementById('readingModeBtn').classList.toggle('active', readingMode);
+  if (readingMode) hidePopup();
+}
+
+function toggleDarkMode() {
+  darkMode = !darkMode;
+  document.body.setAttribute('data-theme', darkMode ? 'dark' : '');
+  document.getElementById('darkModeBtn').classList.toggle('active', darkMode);
+  localStorage.setItem('hread-dark', darkMode);
+}
+
+function toggleAllTranslations() {
+  allTransVisible = !allTransVisible;
+  var els = document.querySelectorAll('.sentence-translation');
+  var togs = document.querySelectorAll('.sentence-toggle');
+  for (var i = 0; i < els.length; i++) {
+    els[i].classList.toggle('visible', allTransVisible);
+  }
+  for (var j = 0; j < togs.length; j++) {
+    togs[j].classList.toggle('open', allTransVisible);
+  }
+  var btn = document.getElementById('showAllBtn');
+  btn.textContent = allTransVisible ? 'Hide All EN' : 'Show All EN';
+  btn.classList.toggle('active', allTransVisible);
+}
+
+function adjustFont(d) {
+  fontSize = Math.max(18, Math.min(44, fontSize + d));
+  document.documentElement.style.setProperty('--hebrew-size', fontSize + 'px');
+  localStorage.setItem('hread-fs', fontSize);
+}
+
+// ============================================================
+// SCROLL PROGRESS
+// ============================================================
+function updateProgress() {
+  var st = window.scrollY;
+  var dh = document.documentElement.scrollHeight - window.innerHeight;
+  var pct = dh > 0 ? (st / dh) * 100 : 0;
+  document.getElementById('progressFill').style.width = pct + '%';
+}
+window.addEventListener('scroll', updateProgress);
+
+// ============================================================
+// BOOT
+// ============================================================
+renderStoryList();
+</script>
+</body>
+</html>
